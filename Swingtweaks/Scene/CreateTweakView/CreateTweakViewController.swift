@@ -9,37 +9,83 @@ import UIKit
 import AVFoundation
 import AVKit
 import Foundation
+import QuickLook
+import Photos
+
+struct Constants {
+ static let colors: [UIColor?] = [
+  .black,
+  .white,
+  .red,
+  .orange,
+  .yellow,
+  .green,
+  .blue,
+  .purple,
+  .brown,
+  .gray,
+  nil
+ ]
+}
 
 class CreateTweakViewController: UIViewController {
     
     @IBOutlet weak var videoView:UIView!
     @IBOutlet weak var btnBack:UIButton!
     @IBOutlet weak var btnPlay:UIButton!
-    @IBOutlet weak var btnSpeed:UIButton!
-    @IBOutlet weak var btnRecord:UIButton!
     @IBOutlet weak var btnLine:UIButton!
-    @IBOutlet weak var btnCircle:UIButton!
-    @IBOutlet weak var btnSquare:UIButton!
-    @IBOutlet weak var btnAnnotationShapes:UIButton!
     @IBOutlet weak var btnZoom:UIButton!
+    @IBOutlet weak var ViewSpeed:UIView!
+    @IBOutlet weak var btnSpeed:UIButton!
     @IBOutlet weak var btnColor:UIButton!
     @IBOutlet weak var btnEraser:UIButton!
+    @IBOutlet weak var btnRecord:UIButton!
+    @IBOutlet weak var btnCircle:UIButton!
+    @IBOutlet weak var btnSquare:UIButton!
     @IBOutlet weak var imgFrames:UIImageView!
-
+    @IBOutlet weak var btnSpeedHalf:UIButton!
+    @IBOutlet weak var btnSpeedNormal:UIButton!
+    @IBOutlet weak var btnSpeedOneFourth:UIButton!
+    @IBOutlet weak var btnSpeedOneEight:UIButton!
+    @IBOutlet weak var btnAnnotationShapes:UIButton!
+    
+    var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
     let urlVideo = "http://techslides.com/demos/sample-videos/small.mp4"
     let urlAudio = "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
     var updatedUrl: URL?
     let videoOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: [String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
+   
+    var isPlaying: Bool {
+        return player?.rate != 0 && player?.error == nil
+    }
+    //  Tools Editors
     var totalVideoDuration = Float()
-    var totalFramesPerSeconds = Float()
-    var getCurrentFramePause = Float()
-    var totalFPS = Float()
-    
-    //
-    var frames:[UIImage] = []
-    var generator:AVAssetImageGenerator!
+      var totalFramesPerSeconds = Float()
+      var getCurrentFramePause = Float()
+      var totalFPS = Float()
+      var checkIsPlaying = 0
+      var frames:[UIImage] = []
+      var generator:AVAssetImageGenerator!
+      //Tools Setup
+      lazy var drawingView: DrawsanaView = {
+       let drawingView = DrawsanaView()
+       drawingView.delegate = self
+       drawingView.operationStack.delegate = self
+       return drawingView
+      }()
+      let strokeWidths: [CGFloat] = [5,10,20]
+      var strokeWidthIndex = 0
+      let imageView = UIImageView(image: UIImage(named: "download1"))
+      lazy var tools: [DrawingTool] = { return [
+       PenTool(),
+       EllipseTool(),
+       RectTool(),
+       EraserTool(),
+      ] }()
+     // private let editor = VideoEditor()
+     // end
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,14 +94,43 @@ class CreateTweakViewController: UIViewController {
 }
 
 extension CreateTweakViewController{
-   private func SetUp() {
-    guard let newurl =  updatedUrl else {
-        return
-    }
-    setVideo(url:newurl)
-       // self.playLocalVideo()
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnLine, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser ].forEach {
+    private func SetUp() {
+        // self.playLocalVideo()
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnLine, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight ].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        }
+        player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+        player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+        playerController?.showsPlaybackControls = true
+        // Show topView
+        playerController?.hidesBottomBarWhenPushed = true
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(restartVideo),
+                                               name: .AVPlayerItemDidPlayToEndTime,
+                                               object: self.player?.currentItem)
+        // Manage video player
+        guard let newurl =  updatedUrl else {
+            return
+        }
+        setVideo(url: newurl)
+        
+    }
+    
+    @objc func restartVideo() {
+        player?.pause()
+        player?.currentItem?.seek(to: CMTime.zero, completionHandler: { _ in
+            self.player?.pause()
+            self.player?.rate = self.playerVedioRate
+            self.ViewSpeed.isHidden = true
+        })
+    }
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "rate", let player = object as? AVPlayer {
+            if player.rate == 1 {
+                print("Playing")
+            } else {
+                print("Paused")
+            }
         }
     }
     private func removePlayer() {
@@ -78,7 +153,8 @@ extension CreateTweakViewController{
         player?.usesExternalPlaybackWhileExternalScreenIsActive = true
         self.videoView.addSubview((playerController?.view)!)
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
-        
+        player?.currentItem?.audioTimePitchAlgorithm = .timeDomain
+
     }
     func playLocalVideo() {
         guard let path = Bundle.main.path(forResource: "videoApp", ofType: "mov") else {
@@ -94,6 +170,8 @@ extension CreateTweakViewController{
         self.videoView.addSubview((playerController?.view)!)
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
     }
+    
+    
 }
 
 // MARK:- Button Action
@@ -123,22 +201,63 @@ extension CreateTweakViewController {
             self.colorAction()
         case btnEraser:
             self.eraserAction()
+        case btnSpeedHalf:
+            speedSelectionAction(speedretio:2, speed: 1/2)
+        case btnSpeedNormal:
+            speedSelectionAction(speedretio:1, speed: 1/1)
+        case btnSpeedOneFourth:
+            speedSelectionAction(speedretio:4, speed: 1/4)
+        case btnSpeedOneEight:
+            speedSelectionAction(speedretio:8, speed: 1/8)
         default:
             break
         }
     }
     private func playAction() {
-        if self.btnPlay.isSelected {
-            self.btnPlay.isSelected = false //video pause
-            //getCurrentFrames()
-            getCurrentFramesOnPause()
+        if isPlaying {
             player?.pause()
-        } else {
-            self.btnPlay.isSelected = true //video playing
-            player?.play()
-            getTotalFramesCount()
-            self.getAllFramesArray()
+            self.btnPlay.isSelected = false
         }
+        else {
+            player?.play()
+            player?.rate = playerVedioRate
+            self.btnPlay.isSelected = true
+        }
+        self.toolsSetup(toolIndex: 0)
+    }
+    
+    private func speedAction() {
+        ViewSpeed.isHidden = false
+    }
+    private func recordAction() {
+        print("recordAction")
+    }
+    private func lineAction() {
+        self.toolsSetup(toolIndex: 0)
+    }
+    private func circleAction() {
+        self.toolsSetup(toolIndex: 1)
+    }
+    private func rectangleAction() {
+        self.toolsSetup(toolIndex: 2)
+    }
+    private func AnnotationShapesAction() {
+        print("AnnotationShapesAction")
+    }
+    private func zoomAction() {
+        print("zoomAction")
+    }
+    private func colorAction() {
+        print("colorAction")
+    }
+    private func eraserAction() {
+        self.toolsSetup(toolIndex: 3)
+    }
+    private func speedSelectionAction(speedretio:Int,speed:Float) {
+        playerVedioRate = speed
+        player?.rate = playerVedioRate
+        ViewSpeed.isHidden = true
+        btnSpeed.setTitle("1/\(speedretio)", for: .normal)
     }
     
     func replaceFramesOnIndex() {
@@ -159,24 +278,24 @@ extension CreateTweakViewController {
     
     func getAllFramesArray() {
         let asset:AVAsset = AVAsset(url:URL(string: urlVideo)!)
-           let duration:Float64 = CMTimeGetSeconds(asset.duration)
-           self.generator = AVAssetImageGenerator(asset:asset)
-           self.generator.appliesPreferredTrackTransform = true
-           self.frames = []
+        let duration:Float64 = CMTimeGetSeconds(asset.duration)
+        self.generator = AVAssetImageGenerator(asset:asset)
+        self.generator.appliesPreferredTrackTransform = true
+        self.frames = []
         for index:Int in 0 ..< Int(self.totalFramesPerSeconds) {
-              self.getFrame(fromTime:Float64(index))
-           }
-           self.generator = nil
-         print("AllFrames", self.frames)
-         replaceFramesOnIndex()
+            self.getFrame(fromTime:Float64(index))
+        }
+        self.generator = nil
+        print("AllFrames", self.frames)
+        replaceFramesOnIndex()
     }
     private func getFrame(fromTime:Float64) {
         let time:CMTime = CMTimeMakeWithSeconds(fromTime, preferredTimescale:1)
         let image:CGImage
         do {
-           try image = self.generator.copyCGImage(at:time, actualTime:nil)
+            try image = self.generator.copyCGImage(at:time, actualTime:nil)
         } catch {
-           return
+            return
         }
         self.frames.append(UIImage(cgImage:image))
     }
@@ -214,33 +333,92 @@ extension CreateTweakViewController {
             print("Img error")
         }
     }
-    private func speedAction() {
-        print("speedAction")
-    }
-    private func recordAction() {
-        print("recordAction")
-    }
-    private func lineAction() {
-        print("lineAction")
-    }
-    private func circleAction() {
-        print("circleAction")
-    }
-    private func rectangleAction() {
-        print("rectangleAction")
-    }
-    private func AnnotationShapesAction() {
-        print("AnnotationShapesAction")
-    }
-    private func zoomAction() {
-        print("zoomAction")
-    }
-    private func colorAction() {
-        print("colorAction")
-    }
-    private func eraserAction() {
-        print("eraserAction")
-    }
-
+}
+extension CreateTweakViewController {
+    func toolsSetup(toolIndex: Int) {
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        // view.addSubview(imageView) { $0.center().height(220).width(500) }
+        view.addSubview(drawingView)
+        Drawing.debugSerialization = true
+        drawingView.set(tool: tools[toolIndex])
+        drawingView.backgroundColor = .clear
+        drawingView.userSettings.strokeColor = Constants.colors.first!
+        drawingView.userSettings.fillColor = Constants.colors.last!
+        drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
+        drawingView.userSettings.fontName = "Marker Felt"
+        drawingView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(100).bottom(-100) }
+      }
 }
 
+// Tools delegates
+extension CreateTweakViewController: ColorPickerViewControllerDelegate {
+  func colorPickerViewControllerDidPick(colorIndex: Int, color: UIColor?, identifier: String) {
+    switch identifier {
+    case "stroke":
+      drawingView.userSettings.strokeColor = color
+    case "fill":
+      drawingView.userSettings.fillColor = color
+    default: break;
+    }
+    dismiss(animated: true, completion: nil)
+  }
+}
+
+extension CreateTweakViewController: DrawingOperationStackDelegate {
+  func drawingOperationStackDidUndo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+     print("ddd")
+      //applyUndoViewState()
+  }
+
+  func drawingOperationStackDidRedo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+    print("ddd")
+    //applyUndoViewState()
+  }
+
+  func drawingOperationStackDidApply(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+    //applyUndoViewState()
+  }
+}
+extension CreateTweakViewController: DrawsanaViewDelegate {
+  /// When tool changes, update the UI
+  func drawsanaView(_ drawsanaView: DrawsanaView, didSwitchTo tool: DrawingTool) {
+   // toolButton.setTitle(drawingView.tool?.name ?? "", for: .normal)
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeStrokeColor strokeColor: UIColor?) {
+   // strokeColorButton.backgroundColor = drawingView.userSettings.strokeColor
+   // strokeColorButton.setTitle(drawingView.userSettings.strokeColor == nil ? "x" : "", for: .normal)
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFillColor fillColor: UIColor?) {
+   // fillColorButton.backgroundColor = drawingView.userSettings.fillColor
+   // fillColorButton.setTitle(drawingView.userSettings.fillColor == nil ? "x" : "", for: .normal)
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeStrokeWidth strokeWidth: CGFloat) {
+    strokeWidthIndex = strokeWidths.firstIndex(of: drawingView.userSettings.strokeWidth) ?? 0
+   // strokeWidthButton.setTitle("\(Int(strokeWidths[strokeWidthIndex]))", for: .normal)
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFontName fontName: String) {
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFontSize fontSize: CGFloat) {
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didStartDragWith tool: DrawingTool) {
+  }
+
+  func drawsanaView(_ drawsanaView: DrawsanaView, didEndDragWith tool: DrawingTool) {
+  }
+}
+
+private extension NSLayoutConstraint {
+  func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint {
+    self.priority = priority
+    return self
+  }
+}

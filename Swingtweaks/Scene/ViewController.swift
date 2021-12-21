@@ -18,12 +18,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var recodeBtn: UIButton!
     @IBOutlet weak var playBtn: UIButton!
       var state: AGAudioRecorderState = .Ready
-    
       var recorder: AGAudioRecorder = AGAudioRecorder(withFileName: "TempFile")
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         recodeBtn.setTitle("Recode", for: .normal)
         playBtn.setTitle("Play", for: .normal)
         recorder.delegate = self
@@ -59,10 +57,10 @@ class ViewController: UIViewController {
     
     private func mergeAudioWithVideo(){
         
-        print("recorder.fileUrl().path\(recorder.fileUrl().path)")
-      
+
         if let videoURL2 = Bundle.main.url(forResource: "videoApp", withExtension: "mov"),
-           let audioURL2 = URL(string:recorder.fileUrl().path){ //Bundle.main.url(forResource: "demoAudio", withExtension: "mp3") {
+    //let audioURL2 =   URL(string:recorder.fileUrl().path){
+          let audioURL2 =  Bundle.main.url(forResource: "demoAudio", withExtension: "mp3") {
             LoadingView.lockView()
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "SwingteaksddMMyyyyHHmmss"
@@ -75,14 +73,14 @@ class ViewController: UIViewController {
                     let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
                     vc.updatedUrl = url
                     self.navigationController?.pushViewController(vc, animated: true)
-                    self.createAlertView(message: "self.FinishMergingVideoWithAudio")
+                 //    self.createAlertView(message: "self.FinishMergingVideoWithAudio")
                 case .failure(let error):
                     print(error)
                     self.createAlertView(message: error.localizedDescription)
                 }
             }
         } else {
-            self.createAlertView(message:" self.MissingVideoFiles")
+            self.createAlertView(message:" self.Missing Video Files")
         }
     }
 }
@@ -116,4 +114,6 @@ extension ViewController: AGAudioRecorderDelegate {
     func agAudioRecorder(_ recorder: AGAudioRecorder, currentTime timeInterval: TimeInterval, formattedString: String) {
         debugPrint(formattedString)
     }
+    
+    
 }

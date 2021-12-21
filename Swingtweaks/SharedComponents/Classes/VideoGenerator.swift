@@ -509,7 +509,7 @@ public class VideoGenerator: NSObject {
     }
     
     let mutableVideoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
-    mutableVideoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
+    mutableVideoComposition.frameDuration = CMTimeMake(value: 100, timescale: 300)//(value: 1, timescale: 30)//CMTimeMake(value: 3000, timescale: 600)//
     mutableVideoComposition.renderSize = CGSize(width: 1280, height: 720)
     
     if let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first {
