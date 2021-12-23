@@ -11,6 +11,7 @@ import AVKit
 import Foundation
 import QuickLook
 import Photos
+import VideoEditor
 
 struct Constants {
  static let colors: [UIColor?] = [
@@ -40,6 +41,7 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnColor:UIButton!
     @IBOutlet weak var btnEraser:UIButton!
     @IBOutlet weak var btnRecord:UIButton!
+    @IBOutlet weak var btnPlayAudioRecord:UIButton!
     @IBOutlet weak var btnCircle:UIButton!
     @IBOutlet weak var btnSquare:UIButton!
     @IBOutlet weak var imgFrames:UIImageView!
@@ -48,7 +50,7 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
     @IBOutlet weak var btnAnnotationShapes:UIButton!
-    
+    @IBOutlet weak var btnSave:UIButton!
     var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
@@ -56,12 +58,13 @@ class CreateTweakViewController: UIViewController {
     let urlAudio = "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
     var updatedUrl: URL?
     let videoOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: [String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
-   
+    var recorder: AGAudioRecorder = AGAudioRecorder(withFileName: "TempFile")
+    var playerPauseTime:Float64 = 0.0
     var isPlaying: Bool {
         return player?.rate != 0 && player?.error == nil
     }
     //  Tools Editors
-    var totalVideoDuration = Float()
+      var totalVideoDuration = Float()
       var totalFramesPerSeconds = Float()
       var getCurrentFramePause = Float()
       var totalFPS = Float()
@@ -90,13 +93,14 @@ class CreateTweakViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
+        recorder.delegate = self
     }
 }
 
 extension CreateTweakViewController{
     private func SetUp() {
         // self.playLocalVideo()
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnLine, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight ].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnLine, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnPlayAudioRecord, btnSave ].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -209,6 +213,10 @@ extension CreateTweakViewController {
             speedSelectionAction(speedretio:4, speed: 1/4)
         case btnSpeedOneEight:
             speedSelectionAction(speedretio:8, speed: 1/8)
+        case btnPlayAudioRecord:
+            recorder.doPlay()
+        case btnSave:
+            merge()
         default:
             break
         }
@@ -223,14 +231,17 @@ extension CreateTweakViewController {
             player?.rate = playerVedioRate
             self.btnPlay.isSelected = true
         }
-        self.toolsSetup(toolIndex: 0)
+        
     }
     
     private func speedAction() {
         ViewSpeed.isHidden = false
     }
     private func recordAction() {
-        print("recordAction")
+        player?.pause()
+        getCurrentFramesOnPause()
+        print(playerPauseTime)
+        recorder.doRecord()
     }
     private func lineAction() {
         self.toolsSetup(toolIndex: 0)
@@ -303,6 +314,7 @@ extension CreateTweakViewController {
         let pauseTime = (self.player?.currentTime())
         let paueseDuration = CMTimeGetSeconds(pauseTime!)
         self.getCurrentFramePause = self.totalFPS * Float(paueseDuration)
+        playerPauseTime = paueseDuration
         print("PauseFrames", self.getCurrentFramePause)
     }
     func getTotalFramesCount() {
@@ -366,7 +378,6 @@ extension CreateTweakViewController: ColorPickerViewControllerDelegate {
     dismiss(animated: true, completion: nil)
   }
 }
-
 extension CreateTweakViewController: DrawingOperationStackDelegate {
   func drawingOperationStackDidUndo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
      print("ddd")
@@ -415,10 +426,97 @@ extension CreateTweakViewController: DrawsanaViewDelegate {
   func drawsanaView(_ drawsanaView: DrawsanaView, didEndDragWith tool: DrawingTool) {
   }
 }
-
 private extension NSLayoutConstraint {
   func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint {
     self.priority = priority
     return self
   }
+}
+
+
+//
+// Merge videos and Audio
+//
+extension CreateTweakViewController {
+    //
+    // Merge videos and Audio
+    //
+    func merge(){
+        if let videoLocalURL =  Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
+           //let firstAudioLocalURL = URL(string:recorder.fileUrl().path),
+           //let secondAudioLocalURL =   URL(string:recorder.fileUrl().path)
+        {
+            let videoAsset = VideoEditor.Asset(localURL: videoLocalURL, volume: 1.0)
+            let firstAudioAsset = VideoEditor.Asset(localURL: recorder.fileUrl(), volume: 1,
+                                                    startTime: CMTime(seconds:  playerPauseTime, preferredTimescale: 1),
+                                                    duration: CMTime(seconds:  audioDuration(audioFileURL: recorder.fileUrl()), preferredTimescale: 1))
+            
+            let secondAudioAsset = VideoEditor.Asset(localURL: recorder.fileUrl(), volume: 1,
+                                                     startTime: CMTime(seconds: 8,  preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
+                                                     duration: CMTime(seconds: 6.0, preferredTimescale: 1))
+            
+            let videoEditor = VideoEditor()
+           // videoEditor.merge(video: videoAsset, audios: [firstAudioAsset, secondAudioAsset], progress: {
+                videoEditor.merge(video: videoAsset, audios: [firstAudioAsset], progress: {
+                progress in
+                print(progress)
+            }, completion: { result in
+                switch result {
+                case .success(let videoURL):
+                    print(videoURL)
+                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
+                    vc.updatedUrl = videoURL
+                    self.navigationController?.pushViewController(vc, animated: true)
+                case .failure(let error):
+                    print(error)
+                }
+            })
+        }
+        else{
+            print("failed")
+        }
+    }
+    
+    //
+    // audio duration
+    //
+    func audioDuration(audioFileURL:URL) -> Float64{
+        let audioAsset = AVURLAsset.init(url: audioFileURL, options: nil)
+        let duration = audioAsset.duration
+        let durationInSeconds = CMTimeGetSeconds(duration)
+        print("durationInSeconds \(durationInSeconds)")
+        return durationInSeconds
+    }
+}
+
+// Recorder Delegates
+extension CreateTweakViewController: AGAudioRecorderDelegate {
+    func agAudioRecorder(_ recorder: AGAudioRecorder, withStates state: AGAudioRecorderState) {
+        switch state {
+        case .error(let e): debugPrint(e)
+        case .Failed(let s): debugPrint(s)
+        case .Finish:
+            btnRecord.isSelected = false
+        case .Recording:
+            btnRecord.isSelected = true
+        case .Pause:
+            print("Pause")
+            btnPlayAudioRecord.isSelected = false
+           // playBtn.setTitle("Pause", for: .normal)
+        case .Play:
+            print("Play")
+            btnPlayAudioRecord.isSelected = true
+
+           // playBtn.setTitle("Play", for: .normal)
+        case .Ready:
+            print("Recode")
+//            recodeBtn.setTitle("Recode", for: .normal)
+//            playBtn.setTitle("Play", for: .normal)
+        }
+        debugPrint(state)
+    }
+    
+    func agAudioRecorder(_ recorder: AGAudioRecorder, currentTime timeInterval: TimeInterval, formattedString: String) {
+        debugPrint(formattedString)
+    }
 }

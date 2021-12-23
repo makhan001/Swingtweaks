@@ -56,10 +56,7 @@
 		88BF91992761CD3A00488A15 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88BF91982761CD3A00488A15 /* Assets.xcassets */; };
 		88BF919C2761CD3A00488A15 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 88BF919A2761CD3A00488A15 /* LaunchScreen.storyboard */; };
 		88BF91AD2761D20600488A15 /* CreateTweakViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF91AC2761D20600488A15 /* CreateTweakViewController.swift */; };
-		88C9E47A277365E300DDAC57 /* TempFile 2.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 88C9E477277365E300DDAC57 /* TempFile 2.m4a */; };
 		88C9E47B277365E300DDAC57 /* videoApp.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 88C9E478277365E300DDAC57 /* videoApp.mp4 */; };
-		88C9E47C277365E300DDAC57 /* TempFile 3.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 88C9E479277365E300DDAC57 /* TempFile 3.m4a */; };
-		88F5A77227708CD6008E77ED /* AudioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F5A77127708CD6008E77ED /* AudioViewController.swift */; };
 		88F628E6276B2B4B0056A87D /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = 88F628DF276B2B4B0056A87D /* .gitkeep */; };
 		88F628E7276B2B4B0056A87D /* VideoGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F628E0276B2B4B0056A87D /* VideoGenerator.swift */; };
 		88F628E8276B2B4B0056A87D /* AVAssetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F628E2276B2B4B0056A87D /* AVAssetExtension.swift */; };
@@ -125,10 +122,7 @@
 		88BF919B2761CD3A00488A15 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88BF919D2761CD3A00488A15 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Swingtweaks/Resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		88BF91AC2761D20600488A15 /* CreateTweakViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTweakViewController.swift; sourceTree = "<group>"; };
-		88C9E477277365E300DDAC57 /* TempFile 2.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TempFile 2.m4a"; sourceTree = SOURCE_ROOT; };
 		88C9E478277365E300DDAC57 /* videoApp.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = videoApp.mp4; sourceTree = SOURCE_ROOT; };
-		88C9E479277365E300DDAC57 /* TempFile 3.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TempFile 3.m4a"; sourceTree = SOURCE_ROOT; };
-		88F5A77127708CD6008E77ED /* AudioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioViewController.swift; sourceTree = "<group>"; };
 		88F5A7742770B836008E77ED /* TempFile.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = TempFile.m4a; sourceTree = "<group>"; };
 		88F628DF276B2B4B0056A87D /* .gitkeep */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		88F628E0276B2B4B0056A87D /* VideoGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoGenerator.swift; sourceTree = "<group>"; };
@@ -326,7 +320,6 @@
 			isa = PBXGroup;
 			children = (
 				88BF91932761CD1000488A15 /* ViewController.swift */,
-				88F5A77127708CD6008E77ED /* AudioViewController.swift */,
 				88BF91AA2761D19200488A15 /* CreateTweakView */,
 			);
 			path = Scene;
@@ -344,8 +337,6 @@
 		88BF91A82761CF5500488A15 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				88C9E477277365E300DDAC57 /* TempFile 2.m4a */,
-				88C9E479277365E300DDAC57 /* TempFile 3.m4a */,
 				88C9E478277365E300DDAC57 /* videoApp.mp4 */,
 				88BF91952761CD1000488A15 /* Main.storyboard */,
 				88BF91982761CD3A00488A15 /* Assets.xcassets */,
@@ -469,7 +460,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88C9E47A277365E300DDAC57 /* TempFile 2.m4a in Resources */,
 				88BF919C2761CD3A00488A15 /* LaunchScreen.storyboard in Resources */,
 				88BF91992761CD3A00488A15 /* Assets.xcassets in Resources */,
 				88C9E47B277365E300DDAC57 /* videoApp.mp4 in Resources */,
@@ -477,7 +467,6 @@
 				889614F0276A06F200D59E02 /* demoAudio.mp3 in Resources */,
 				88BF91972761CD1000488A15 /* Main.storyboard in Resources */,
 				8884534327720163001E22B9 /* videoApp.mov in Resources */,
-				88C9E47C277365E300DDAC57 /* TempFile 3.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,7 +547,6 @@
 				88F628E7276B2B4B0056A87D /* VideoGenerator.swift in Sources */,
 				8884539D27720400001E22B9 /* ImmediatePanGestureRecognizer.swift in Sources */,
 				8884539E27720400001E22B9 /* Layout.swift in Sources */,
-				88F5A77227708CD6008E77ED /* AudioViewController.swift in Sources */,
 				8884538D27720400001E22B9 /* EllipseShape.swift in Sources */,
 				8884537E27720400001E22B9 /* TextShapeEditingView.swift in Sources */,
 				8884538827720400001E22B9 /* PenShape.swift in Sources */,

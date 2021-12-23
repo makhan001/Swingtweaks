@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "64F42223-3BBC-4C06-BB6F-687E8B9A0EB3"
+            uuid = "AFA65A2C-026A-43C4-ABCF-BA1E1087F3FD"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Swingtweaks/Scene/ViewController.swift"
+            filePath = "Swingtweaks/Scene/CreateTweakView/CreateTweakViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "merge()"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
+            landmarkName = "playAction()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

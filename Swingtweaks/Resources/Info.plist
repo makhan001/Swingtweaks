@@ -67,5 +67,10 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Need microphone access for uploading audios</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+    </dict>
 </dict>
 </plist>

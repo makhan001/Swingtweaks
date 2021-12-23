@@ -27,11 +27,11 @@ class ViewController: UIViewController {
     
     @IBAction func PlayVideo(_ sender: Any) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
+        vc.updatedUrl = Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func mergeVideo(_ sender: Any) {
-        //mergeAudioWithVideo()
         merge()
     }
     
@@ -55,32 +55,7 @@ class ViewController: UIViewController {
         }
     }
     
-    private func mergeAudioWithVideo(){
-        if let videoURL2 = Bundle.main.url(forResource: "videoApp", withExtension: "mov"),
-           //let audioURL2 =   URL(string:recorder.fileUrl().path){
-           let audioURL2 =  Bundle.main.url(forResource: "demoAudio", withExtension: "mp3") {
-            LoadingView.lockView()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "SwingteaksddMMyyyyHHmmss"
-            VideoGenerator.fileName =  "\(dateFormatter.string(from: Date()))"
-            VideoGenerator.current.mergeVideoWithAudio(videoUrl: videoURL2, audioUrl: audioURL2) { (result) in
-                LoadingView.unlockView()
-                switch result {
-                case .success(let url):
-                    print(url)
-                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
-                    vc.updatedUrl = url
-                    self.navigationController?.pushViewController(vc, animated: true)
-                //    self.createAlertView(message: "self.FinishMergingVideoWithAudio")
-                case .failure(let error):
-                    print(error)
-                    self.createAlertView(message: error.localizedDescription)
-                }
-            }
-        } else {
-            self.createAlertView(message:" self.Missing Video Files")
-        }
-    }
+    
 }
 
 extension ViewController: AGAudioRecorderDelegate {
@@ -113,21 +88,23 @@ extension ViewController {
     // Merge videos and Audio
     //
     func merge(){
-        if let videoLocalURL =  Bundle.main.url(forResource: "videoApp", withExtension: "mp4"),
-           let firstAudioLocalURL =  Bundle.main.url(forResource: "TempFile 3", withExtension: "m4a"),
-           let secondAudioLocalURL =  Bundle.main.url(forResource: "TempFile 2", withExtension: "m4a")
-           {
-            audioDuration(audioFileURL: firstAudioLocalURL)
-
+        if let videoLocalURL =  Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
+        //let firstAudioLocalURL = URL(string:recorder.fileUrl().path),
+        //let secondAudioLocalURL =   URL(string:recorder.fileUrl().path)
+        {
             let videoAsset = VideoEditor.Asset(localURL: videoLocalURL, volume: 1.0)
-            let firstAudioAsset = VideoEditor.Asset(localURL: firstAudioLocalURL, volume: 1,
+            let firstAudioAsset = VideoEditor.Asset(localURL: recorder.fileUrl(), volume: 1,
                                                     startTime: CMTime.zero,
-                                                    duration: CMTime(seconds: 6.0, preferredTimescale: 1))
-            let secondAudioAsset = VideoEditor.Asset(localURL: secondAudioLocalURL, volume: 1,
+                                                    duration: CMTime(seconds:  audioDuration(audioFileURL: recorder.fileUrl()), preferredTimescale: 1))
+            
+            let secondAudioAsset = VideoEditor.Asset(localURL: recorder.fileUrl(), volume: 1,
                                                      startTime: CMTime(seconds: 8,  preferredTimescale: CMTimeScale(NSEC_PER_SEC)),
                                                      duration: CMTime(seconds: 6.0, preferredTimescale: 1))
+            
             let videoEditor = VideoEditor()
-            videoEditor.merge(video: videoAsset, audios: [firstAudioAsset, secondAudioAsset], progress: { progress in
+            // videoEditor.merge(video: videoAsset, audios: [firstAudioAsset, secondAudioAsset], progress: {
+            videoEditor.merge(video: videoAsset, audios: [firstAudioAsset], progress: {
+                progress in
                 print(progress)
             }, completion: { result in
                 switch result {
@@ -149,10 +126,11 @@ extension ViewController {
     //
     // audio duration
     //
-    func audioDuration(audioFileURL:URL){
+    func audioDuration(audioFileURL:URL) -> Float64{
         let audioAsset = AVURLAsset.init(url: audioFileURL, options: nil)
         let duration = audioAsset.duration
         let durationInSeconds = CMTimeGetSeconds(duration)
         print("durationInSeconds \(durationInSeconds)")
+        return durationInSeconds
     }
 }
