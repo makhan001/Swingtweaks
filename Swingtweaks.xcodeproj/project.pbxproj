@@ -47,8 +47,10 @@
 		8884539C27720400001E22B9 /* KeyedDecodingContainer+DrawsanaExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8884537527720400001E22B9 /* KeyedDecodingContainer+DrawsanaExtensions.swift */; };
 		8884539D27720400001E22B9 /* ImmediatePanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8884537627720400001E22B9 /* ImmediatePanGestureRecognizer.swift */; };
 		8884539E27720400001E22B9 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8884537727720400001E22B9 /* Layout.swift */; };
-		889614EB2769C88E00D59E02 /* VideoUltilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889614EA2769C88D00D59E02 /* VideoUltilities.swift */; };
 		889614F0276A06F200D59E02 /* demoAudio.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 889614EF276A06F200D59E02 /* demoAudio.mp3 */; };
+		88B09718277DD08700C8781B /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B09717277DD08700C8781B /* UIView+Extension.swift */; };
+		88B0971C277DE26F00C8781B /* VideoEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B0971B277DE26F00C8781B /* VideoEditor.swift */; };
+		88B09726277DE73000C8781B /* ImageToVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B09725277DE73000C8781B /* ImageToVideo.swift */; };
 		88BF91902761CD1000488A15 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF918F2761CD1000488A15 /* AppDelegate.swift */; };
 		88BF91922761CD1000488A15 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF91912761CD1000488A15 /* SceneDelegate.swift */; };
 		88BF91942761CD1000488A15 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BF91932761CD1000488A15 /* ViewController.swift */; };
@@ -111,8 +113,10 @@
 		8884537527720400001E22B9 /* KeyedDecodingContainer+DrawsanaExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+DrawsanaExtensions.swift"; sourceTree = "<group>"; };
 		8884537627720400001E22B9 /* ImmediatePanGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImmediatePanGestureRecognizer.swift; sourceTree = "<group>"; };
 		8884537727720400001E22B9 /* Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
-		889614EA2769C88D00D59E02 /* VideoUltilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoUltilities.swift; sourceTree = "<group>"; };
 		889614EF276A06F200D59E02 /* demoAudio.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = demoAudio.mp3; sourceTree = "<group>"; };
+		88B09717277DD08700C8781B /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		88B0971B277DE26F00C8781B /* VideoEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEditor.swift; sourceTree = "<group>"; };
+		88B09725277DE73000C8781B /* ImageToVideo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageToVideo.swift; sourceTree = "<group>"; };
 		88BF918C2761CD1000488A15 /* Swingtweaks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swingtweaks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88BF918F2761CD1000488A15 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		88BF91912761CD1000488A15 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -276,13 +280,39 @@
 		889614E92769C88D00D59E02 /* SharedComponents */ = {
 			isa = PBXGroup;
 			children = (
+				88B09724277DE6ED00C8781B /* VideoFromFrames */,
+				88B0971A277DE22900C8781B /* AddOverlayFrameClass */,
+				88B09716277DD03500C8781B /* Extension */,
 				88845346277203FF001E22B9 /* Drawsana */,
 				8884537727720400001E22B9 /* Layout.swift */,
 				88F628F0276B72EE0056A87D /* AudioRecorder */,
 				88F628DE276B2B4B0056A87D /* Classes */,
-				889614EA2769C88D00D59E02 /* VideoUltilities.swift */,
 			);
 			path = SharedComponents;
+			sourceTree = "<group>";
+		};
+		88B09716277DD03500C8781B /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				88B09717277DD08700C8781B /* UIView+Extension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		88B0971A277DE22900C8781B /* AddOverlayFrameClass */ = {
+			isa = PBXGroup;
+			children = (
+				88B0971B277DE26F00C8781B /* VideoEditor.swift */,
+			);
+			path = AddOverlayFrameClass;
+			sourceTree = "<group>";
+		};
+		88B09724277DE6ED00C8781B /* VideoFromFrames */ = {
+			isa = PBXGroup;
+			children = (
+				88B09725277DE73000C8781B /* ImageToVideo.swift */,
+			);
+			path = VideoFromFrames;
 			sourceTree = "<group>";
 		};
 		88BF91832761CD1000488A15 = {
@@ -521,6 +551,7 @@
 			files = (
 				8884538B27720400001E22B9 /* TextShape.swift in Sources */,
 				8884539427720400001E22B9 /* ToolOperationContext.swift in Sources */,
+				88B09726277DE73000C8781B /* ImageToVideo.swift in Sources */,
 				8884537F27720400001E22B9 /* TextTool.swift in Sources */,
 				8884539127720400001E22B9 /* DrawsanaView.swift in Sources */,
 				8884539027720400001E22B9 /* ColorPickerViewController.swift in Sources */,
@@ -530,7 +561,6 @@
 				8884539C27720400001E22B9 /* KeyedDecodingContainer+DrawsanaExtensions.swift in Sources */,
 				88BF91942761CD1000488A15 /* ViewController.swift in Sources */,
 				8884539627720400001E22B9 /* Drawing.swift in Sources */,
-				889614EB2769C88E00D59E02 /* VideoUltilities.swift in Sources */,
 				8884538E27720400001E22B9 /* AngleShape.swift in Sources */,
 				8884538327720400001E22B9 /* ArrowTool_EllipseTool_LineTool_RectTool.swift in Sources */,
 				8884539327720400001E22B9 /* ToolSettings.swift in Sources */,
@@ -541,6 +571,7 @@
 				8884537927720400001E22B9 /* DrawingOperations.swift in Sources */,
 				8884539827720400001E22B9 /* CGPoint+DrawsanaExtensions.swift in Sources */,
 				8884538227720400001E22B9 /* DrawingToolForShapeWithThreePoints.swift in Sources */,
+				88B0971C277DE26F00C8781B /* VideoEditor.swift in Sources */,
 				8884539727720400001E22B9 /* DrawsanaUtilities.swift in Sources */,
 				88F628ED276B2D060056A87D /* LoadingView.swift in Sources */,
 				8884537B27720400001E22B9 /* StarTool_PentagonTool_TriangleTool.swift in Sources */,
@@ -567,6 +598,7 @@
 				8884538027720400001E22B9 /* PenTool_EraserTool.swift in Sources */,
 				8884538127720400001E22B9 /* DrawingToolForShapeWithTwoPoints.swift in Sources */,
 				88F628E9276B2B4B0056A87D /* ImageExtension.swift in Sources */,
+				88B09718277DD08700C8781B /* UIView+Extension.swift in Sources */,
 				8884538727720400001E22B9 /* LineShape.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -715,18 +747,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 7K87V8X3V7;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SZ7TCZZC57;
 				INFOPLIST_FILE = Swingtweaks/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.adilbek.iscra;
+				PRODUCT_BUNDLE_IDENTIFIER = com.steven.swingtweaks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = Iscra_Development_Profile;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -738,18 +770,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 7K87V8X3V7;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = SZ7TCZZC57;
 				INFOPLIST_FILE = Swingtweaks/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.adilbek.iscra;
+				PRODUCT_BUNDLE_IDENTIFIER = com.steven.swingtweaks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = Iscra_Development_Profile;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

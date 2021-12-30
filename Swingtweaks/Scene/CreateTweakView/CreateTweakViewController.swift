@@ -14,93 +14,80 @@ import Photos
 import VideoEditor
 
 struct Constants {
- static let colors: [UIColor?] = [
-  .black,
-  .white,
-  .red,
-  .orange,
-  .yellow,
-  .green,
-  .blue,
-  .purple,
-  .brown,
-  .gray,
-  nil
- ]
+    static let colors: [UIColor?] = [.black,.white,.red,.orange,.yellow,
+                                     .green,.blue,.purple,.brown,.gray,nil]
 }
-
 class CreateTweakViewController: UIViewController {
     
     @IBOutlet weak var videoView:UIView!
     @IBOutlet weak var btnBack:UIButton!
     @IBOutlet weak var btnPlay:UIButton!
-    @IBOutlet weak var btnLine:UIButton!
+    @IBOutlet weak var btnPencil:UIButton!
     @IBOutlet weak var btnZoom:UIButton!
     @IBOutlet weak var ViewSpeed:UIView!
+    @IBOutlet weak var btnSave:UIButton!
     @IBOutlet weak var btnSpeed:UIButton!
     @IBOutlet weak var btnColor:UIButton!
     @IBOutlet weak var btnEraser:UIButton!
     @IBOutlet weak var btnRecord:UIButton!
-    @IBOutlet weak var btnPlayAudioRecord:UIButton!
     @IBOutlet weak var btnCircle:UIButton!
     @IBOutlet weak var btnSquare:UIButton!
     @IBOutlet weak var imgFrames:UIImageView!
     @IBOutlet weak var btnSpeedHalf:UIButton!
     @IBOutlet weak var btnSpeedNormal:UIButton!
-    @IBOutlet weak var btnSpeedOneFourth:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
+    @IBOutlet weak var btnSpeedOneFourth:UIButton!
     @IBOutlet weak var btnAnnotationShapes:UIButton!
-    @IBOutlet weak var btnSave:UIButton!
+    @IBOutlet weak var btnPlayAudioRecord:UIButton!
+    @IBOutlet weak var btnDrawLine:UIButton!
+    
+    var videoUrl: URL?
     var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
-    let urlVideo = "http://techslides.com/demos/sample-videos/small.mp4"
-    let urlAudio = "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
-    var updatedUrl: URL?
-    let videoOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: [String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
     var recorder: AGAudioRecorder = AGAudioRecorder(withFileName: "TempFile")
     var playerPauseTime:Float64 = 0.0
     var isPlaying: Bool {
         return player?.rate != 0 && player?.error == nil
     }
     //  Tools Editors
-      var totalVideoDuration = Float()
-      var totalFramesPerSeconds = Float()
-      var getCurrentFramePause = Float()
-      var totalFPS = Float()
-      var checkIsPlaying = 0
-      var frames:[UIImage] = []
-      var generator:AVAssetImageGenerator!
-      //Tools Setup
-      lazy var drawingView: DrawsanaView = {
-       let drawingView = DrawsanaView()
-       drawingView.delegate = self
-       drawingView.operationStack.delegate = self
-       return drawingView
-      }()
-      let strokeWidths: [CGFloat] = [5,10,20]
-      var strokeWidthIndex = 0
-      let imageView = UIImageView(image: UIImage(named: "download1"))
-      lazy var tools: [DrawingTool] = { return [
-       PenTool(),
-       EllipseTool(),
-       RectTool(),
-       EraserTool(),
-      ] }()
-     // private let editor = VideoEditor()
-     // end
+    var totalVideoDuration = Float()
+    var totalFramesPerSeconds = Float()
+    var getCurrentFramePause = Float()
+    var totalFPS = Float()
+    var allVideoframes:[UIImage] = []
+    var assetsGenerator:AVAssetImageGenerator!
+    //Tools Setup
+    lazy var drawingView: DrawsanaView = {
+        let drawingView = DrawsanaView()
+        return drawingView
+    }()
+    let strokeWidths: [CGFloat] = [5,10,20]
+    var strokeWidthIndex = 0
+    lazy var selectionTool = { return SelectionTool(delegate: self) }()
+    lazy var tools: [DrawingTool] = { return [
+        PenTool(),
+        EllipseTool(),
+        RectTool(),
+        EraserTool(),
+        LineTool(),
+        selectionTool
+    ] }()
+    private let addOverlayEditor = addOverlayImageLibrary()
+    // end
     
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
         recorder.delegate = self
+        getTotalFramesCount(videoUrl: videoUrl!)
     }
 }
 
 extension CreateTweakViewController{
     private func SetUp() {
         // self.playLocalVideo()
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnLine, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnPlayAudioRecord, btnSave ].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnPlayAudioRecord, btnSave, btnDrawLine].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -113,7 +100,7 @@ extension CreateTweakViewController{
                                                name: .AVPlayerItemDidPlayToEndTime,
                                                object: self.player?.currentItem)
         // Manage video player
-        guard let newurl =  updatedUrl else {
+        guard let newurl =  videoUrl else {
             return
         }
         setVideo(url: newurl)
@@ -158,24 +145,8 @@ extension CreateTweakViewController{
         self.videoView.addSubview((playerController?.view)!)
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
         player?.currentItem?.audioTimePitchAlgorithm = .timeDomain
-
+        
     }
-    func playLocalVideo() {
-        guard let path = Bundle.main.path(forResource: "videoApp", ofType: "mov") else {
-            return
-        }
-        let videoURL = NSURL(fileURLWithPath: path)
-        removePlayer()
-        player = AVPlayer(url: videoURL as URL)
-        playerController = AVPlayerViewController()
-        playerController?.player = player
-        player?.allowsExternalPlayback = true
-        player?.usesExternalPlaybackWhileExternalScreenIsActive = true
-        self.videoView.addSubview((playerController?.view)!)
-        playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
-    }
-    
-    
 }
 
 // MARK:- Button Action
@@ -191,8 +162,10 @@ extension CreateTweakViewController {
             self.speedAction()
         case btnRecord :
             self.recordAction()
-        case btnLine:
+        case btnPencil:
             self.lineAction()
+        case btnDrawLine:
+            drawLineAction()
         case btnCircle:
             self.circleAction()
         case btnSquare:
@@ -216,7 +189,9 @@ extension CreateTweakViewController {
         case btnPlayAudioRecord:
             recorder.doPlay()
         case btnSave:
-            merge()
+            self.mergeRecordedAudio()
+        //    self.saveOverlayViewWithVideo()
+        //   self.createVideoWithImageArray()
         default:
             break
         }
@@ -241,6 +216,7 @@ extension CreateTweakViewController {
         player?.pause()
         getCurrentFramesOnPause()
         print(playerPauseTime)
+        getCurrentFrames()
         recorder.doRecord()
     }
     private func lineAction() {
@@ -253,7 +229,7 @@ extension CreateTweakViewController {
         self.toolsSetup(toolIndex: 2)
     }
     private func AnnotationShapesAction() {
-        print("AnnotationShapesAction")
+        self.toolsSetup(toolIndex: 5)
     }
     private func zoomAction() {
         print("zoomAction")
@@ -264,6 +240,9 @@ extension CreateTweakViewController {
     private func eraserAction() {
         self.toolsSetup(toolIndex: 3)
     }
+    private func drawLineAction() {
+        self.toolsSetup(toolIndex: 4)
+    }
     private func speedSelectionAction(speedretio:Int,speed:Float) {
         playerVedioRate = speed
         player?.rate = playerVedioRate
@@ -272,43 +251,30 @@ extension CreateTweakViewController {
     }
     
     func replaceFramesOnIndex() {
-        for index in 0..<self.frames.count {
+        for index in 0..<self.allVideoframes.count {
             if index % 3 == 0 {
-                self.frames.remove(at: index)
-                self.frames.insert(#imageLiteral(resourceName: "ImageNew"), at: index)
+                self.allVideoframes.remove(at: index)
+                self.allVideoframes.insert(#imageLiteral(resourceName: "ImageNew"), at: index)
             }
         }
-        print(self.frames)
-        for index in 0..<self.frames.count {
+        print(self.allVideoframes)
+        for index in 0..<self.allVideoframes.count {
             if index % 3 == 0 {
-                let newImg = self.frames[index]
+                let newImg = self.allVideoframes[index]
                 print(newImg)
             }
         }
     }
     
-    func getAllFramesArray() {
-        let asset:AVAsset = AVAsset(url:URL(string: urlVideo)!)
-        let duration:Float64 = CMTimeGetSeconds(asset.duration)
-        self.generator = AVAssetImageGenerator(asset:asset)
-        self.generator.appliesPreferredTrackTransform = true
-        self.frames = []
-        for index:Int in 0 ..< Int(self.totalFramesPerSeconds) {
-            self.getFrame(fromTime:Float64(index))
-        }
-        self.generator = nil
-        print("AllFrames", self.frames)
-        replaceFramesOnIndex()
-    }
     private func getFrame(fromTime:Float64) {
         let time:CMTime = CMTimeMakeWithSeconds(fromTime, preferredTimescale:1)
         let image:CGImage
         do {
-            try image = self.generator.copyCGImage(at:time, actualTime:nil)
+            try image = self.assetsGenerator.copyCGImage(at:time, actualTime:nil)
         } catch {
             return
         }
-        self.frames.append(UIImage(cgImage:image))
+        self.allVideoframes.append(UIImage(cgImage:image))
     }
     func getCurrentFramesOnPause() {
         let pauseTime = (self.player?.currentTime())
@@ -317,40 +283,39 @@ extension CreateTweakViewController {
         playerPauseTime = paueseDuration
         print("PauseFrames", self.getCurrentFramePause)
     }
-    func getTotalFramesCount() {
-        let asset = AVURLAsset(url: URL(string: urlVideo)!, options: nil)
+    func getTotalFramesCount(videoUrl: URL) {
+        let asset = AVURLAsset(url: videoUrl, options: nil)
         let tracks = asset.tracks(withMediaType: .video)
         if let framePerSeconds = tracks.first?.nominalFrameRate {
             print("FramePerSeconds", framePerSeconds)
             self.totalFPS = framePerSeconds
-            if let duration = self.player?.currentItem?.asset.duration {
-                let totalSeconds = CMTimeGetSeconds(duration)
-                self.totalVideoDuration = Float(totalSeconds)
-                print("TotalDurationSeconds :: \(self.totalVideoDuration)")
-                self.totalFramesPerSeconds = Float(totalSeconds) * framePerSeconds
-                print("Total frames", self.totalFramesPerSeconds)
-            }
+            let totalSeconds = CMTimeGetSeconds(asset.duration)
+            self.totalVideoDuration = Float(totalSeconds)
+            print("TotalDurationSeconds :: \(self.totalVideoDuration)")
+            self.totalFramesPerSeconds = Float(totalSeconds) * framePerSeconds
+            print("Total frames", self.totalFramesPerSeconds)
+            self.createVideoFromFrames(videoUrl: videoUrl)
         }
-        
     }
+    
     func getCurrentFrames() {
-        let asset = AVAsset(url: URL(string: urlVideo)!)
-        let assetImgGenerate = AVAssetImageGenerator(asset: asset)
-        assetImgGenerate.appliesPreferredTrackTransform = true
-        let time = self.player?.currentTime()
-        do {
-            let img = try assetImgGenerate.copyCGImage(at: time!, actualTime: nil)
-            self.imgFrames.image = UIImage(cgImage: img)
-        } catch {
-            print("Img error")
+        if let videoLocalURL =  Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
+        {
+            let asset = AVAsset(url: videoLocalURL)
+            let assetImgGenerate = AVAssetImageGenerator(asset: asset)
+            assetImgGenerate.appliesPreferredTrackTransform = true
+            let time = self.player?.currentTime()
+            do {
+                let img = try assetImgGenerate.copyCGImage(at: time!, actualTime: nil)
+                self.imgFrames.image = UIImage(cgImage: img)
+            } catch {
+                print("Img error")
+            }
         }
     }
 }
 extension CreateTweakViewController {
     func toolsSetup(toolIndex: Int) {
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        // view.addSubview(imageView) { $0.center().height(220).width(500) }
         view.addSubview(drawingView)
         Drawing.debugSerialization = true
         drawingView.set(tool: tools[toolIndex])
@@ -360,77 +325,40 @@ extension CreateTweakViewController {
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
         drawingView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(100).bottom(-100) }
-      }
+    }
+}
+
+extension CreateTweakViewController: SelectionToolDelegate {
+    // When a shape is double-tapped by the selection tool, and it's text,
+    func selectionToolDidTapOnAlreadySelectedShape(_ shape: ShapeSelectable) {
+        if shape as? TextShape != nil {
+            // drawingView.set(tool: textTool, shape: shape)
+        } else {
+            drawingView.toolSettings.selectedShape = nil
+        }
+    }
 }
 
 // Tools delegates
 extension CreateTweakViewController: ColorPickerViewControllerDelegate {
-  func colorPickerViewControllerDidPick(colorIndex: Int, color: UIColor?, identifier: String) {
-    switch identifier {
-    case "stroke":
-      drawingView.userSettings.strokeColor = color
-    case "fill":
-      drawingView.userSettings.fillColor = color
-    default: break;
+    func colorPickerViewControllerDidPick(colorIndex: Int, color: UIColor?, identifier: String) {
+        switch identifier {
+        case "stroke":
+            drawingView.userSettings.strokeColor = color
+        case "fill":
+            drawingView.userSettings.fillColor = color
+        default: break;
+        }
+        dismiss(animated: true, completion: nil)
     }
-    dismiss(animated: true, completion: nil)
-  }
 }
-extension CreateTweakViewController: DrawingOperationStackDelegate {
-  func drawingOperationStackDidUndo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
-     print("ddd")
-      //applyUndoViewState()
-  }
 
-  func drawingOperationStackDidRedo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
-    print("ddd")
-    //applyUndoViewState()
-  }
-
-  func drawingOperationStackDidApply(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
-    //applyUndoViewState()
-  }
-}
-extension CreateTweakViewController: DrawsanaViewDelegate {
-  /// When tool changes, update the UI
-  func drawsanaView(_ drawsanaView: DrawsanaView, didSwitchTo tool: DrawingTool) {
-   // toolButton.setTitle(drawingView.tool?.name ?? "", for: .normal)
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeStrokeColor strokeColor: UIColor?) {
-   // strokeColorButton.backgroundColor = drawingView.userSettings.strokeColor
-   // strokeColorButton.setTitle(drawingView.userSettings.strokeColor == nil ? "x" : "", for: .normal)
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFillColor fillColor: UIColor?) {
-   // fillColorButton.backgroundColor = drawingView.userSettings.fillColor
-   // fillColorButton.setTitle(drawingView.userSettings.fillColor == nil ? "x" : "", for: .normal)
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeStrokeWidth strokeWidth: CGFloat) {
-    strokeWidthIndex = strokeWidths.firstIndex(of: drawingView.userSettings.strokeWidth) ?? 0
-   // strokeWidthButton.setTitle("\(Int(strokeWidths[strokeWidthIndex]))", for: .normal)
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFontName fontName: String) {
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didChangeFontSize fontSize: CGFloat) {
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didStartDragWith tool: DrawingTool) {
-  }
-
-  func drawsanaView(_ drawsanaView: DrawsanaView, didEndDragWith tool: DrawingTool) {
-  }
-}
 private extension NSLayoutConstraint {
-  func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint {
-    self.priority = priority
-    return self
-  }
+    func withPriority(_ priority: UILayoutPriority) -> NSLayoutConstraint {
+        self.priority = priority
+        return self
+    }
 }
 
 
@@ -439,12 +367,61 @@ private extension NSLayoutConstraint {
 //
 extension CreateTweakViewController {
     //
+    //Merge OverlayView with video
+    //
+    func saveOverlayViewWithVideo() {
+        if let imgRender = drawingView.render() {
+            print("imgrender",imgRender)
+            self.addOverlayEditor.editVideo(fromVideoAt: videoUrl!, drawImage: imgRender, drawingReact: self.drawingView.frame, videoReact: self.videoView.frame) { (exportedURL) in
+                print("exportedURL", exportedURL)
+                guard let newVideoURL = exportedURL else {
+                    return
+                }
+                self.saveVideoToLibrary(exportedURL: newVideoURL)
+            }
+            
+        }
+    }
+    //
+    // Create video From frames Array
+    //
+    func createVideoFromFrames(videoUrl: URL) {
+        self.allVideoframes = []
+        let asset = AVURLAsset(url: (videoUrl as URL), options: nil)
+        let videoDuration = asset.duration
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.requestedTimeToleranceAfter = CMTime.zero
+        generator.requestedTimeToleranceBefore = CMTime.zero
+        var frameForTimes = [NSValue]()
+        let sampleCounts = Int(self.totalFramesPerSeconds)
+        let totalTimeLength = Int(videoDuration.seconds * Double(videoDuration.timescale))
+        let step = totalTimeLength / sampleCounts
+        for i in 0 ..< sampleCounts {
+            let cmTime = CMTimeMake(value: Int64(i * step), timescale: Int32(videoDuration.timescale))
+            frameForTimes.append(NSValue(time: cmTime))
+        }
+        generator.generateCGImagesAsynchronously(forTimes: frameForTimes, completionHandler: {requestedTime, image, actualTime, result, error in
+            DispatchQueue.main.async {
+                if let image = image {
+                    print(requestedTime.value, requestedTime.seconds, actualTime.value)
+                    self.allVideoframes.append(UIImage(cgImage: image))
+                }
+            }
+            print("frames ,\(self.allVideoframes)")
+            print("frames count ,\(self.allVideoframes.count)")
+        })
+        //          DispatchQueue.main.asyncAfter(deadline: .now() + 25.0) {
+        //            print("frames count after 20 sec ,\(self.allVideoframes.count)")
+        //            self.createVideoWithImageArray()
+        //          }
+    }
+    //
     // Merge videos and Audio
     //
-    func merge(){
+    func mergeRecordedAudio(){
         if let videoLocalURL =  Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
-           //let firstAudioLocalURL = URL(string:recorder.fileUrl().path),
-           //let secondAudioLocalURL =   URL(string:recorder.fileUrl().path)
+        //  let firstAudioLocalURL = URL(string:recorder.fileUrl().path)
+        //  let secondAudioLocalURL =   URL(string:recorder.fileUrl().path)
         {
             let videoAsset = VideoEditor.Asset(localURL: videoLocalURL, volume: 1.0)
             let firstAudioAsset = VideoEditor.Asset(localURL: recorder.fileUrl(), volume: 1,
@@ -456,17 +433,15 @@ extension CreateTweakViewController {
                                                      duration: CMTime(seconds: 6.0, preferredTimescale: 1))
             
             let videoEditor = VideoEditor()
-           // videoEditor.merge(video: videoAsset, audios: [firstAudioAsset, secondAudioAsset], progress: {
-                videoEditor.merge(video: videoAsset, audios: [firstAudioAsset], progress: {
+            // videoEditor.merge(video: videoAsset, audios: [firstAudioAsset, secondAudioAsset], progress: {
+            videoEditor.merge(video: videoAsset, audios: [firstAudioAsset], progress: {
                 progress in
                 print(progress)
             }, completion: { result in
                 switch result {
                 case .success(let videoURL):
                     print(videoURL)
-                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
-                    vc.updatedUrl = videoURL
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    self.navigationController?.popViewController(animated: true)
                 case .failure(let error):
                     print(error)
                 }
@@ -488,8 +463,9 @@ extension CreateTweakViewController {
         return durationInSeconds
     }
 }
-
+//
 // Recorder Delegates
+//
 extension CreateTweakViewController: AGAudioRecorderDelegate {
     func agAudioRecorder(_ recorder: AGAudioRecorder, withStates state: AGAudioRecorderState) {
         switch state {
@@ -500,23 +476,38 @@ extension CreateTweakViewController: AGAudioRecorderDelegate {
         case .Recording:
             btnRecord.isSelected = true
         case .Pause:
-            print("Pause")
             btnPlayAudioRecord.isSelected = false
-           // playBtn.setTitle("Pause", for: .normal)
+        // playBtn.setTitle("Pause", for: .normal)
         case .Play:
-            print("Play")
             btnPlayAudioRecord.isSelected = true
-
-           // playBtn.setTitle("Play", for: .normal)
         case .Ready:
             print("Recode")
-//            recodeBtn.setTitle("Recode", for: .normal)
-//            playBtn.setTitle("Play", for: .normal)
         }
         debugPrint(state)
     }
     
     func agAudioRecorder(_ recorder: AGAudioRecorder, currentTime timeInterval: TimeInterval, formattedString: String) {
         debugPrint(formattedString)
+    }
+}
+
+extension CreateTweakViewController {
+    func createVideoWithImageArray() {
+        DispatchQueue.main.async {
+            if self.allVideoframes.count > 0 {
+                self.makeMovie(size: self.allVideoframes.first!.size, images: self.allVideoframes)
+            }
+        }
+    }
+    func makeMovie(size: CGSize, images: [UIImage]) {
+        var settings = RenderSettings()
+        settings.size = size
+        settings.fps = Double(self.totalFPS)
+        let imageAnimator = ImageAnimator(renderSettings: settings) {
+            return images
+        }
+        imageAnimator.render() {
+            print("yesMovieCretaed")
+        }
     }
 }

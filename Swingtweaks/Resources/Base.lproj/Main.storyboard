@@ -24,50 +24,40 @@
                                     <color key="titleColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="PlayVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="b2d-3P-TfB"/>
+                                    <action selector="PlayVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="M4K-1h-3R4"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ORl-Ah-bYp">
-                                <rect key="frame" x="185" y="802" width="44" height="30"/>
-                                <state key="normal" title="Merge"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2U-wx-aqA">
+                                <rect key="frame" x="132" y="362" width="150" height="40"/>
+                                <color key="backgroundColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="3ue-YM-0r4"/>
+                                    <constraint firstAttribute="height" constant="40" id="vzd-dA-Mdz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <state key="normal" title="Camera Roll">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="mergeVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="77u-Dr-VYW"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tZH-gD-ClW">
-                                <rect key="frame" x="192" y="697" width="30" height="30"/>
-                                <state key="normal" title="play"/>
-                                <connections>
-                                    <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="53V-GH-9mq"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPo-oH-TIz">
-                                <rect key="frame" x="184.5" y="747" width="45" height="30"/>
-                                <state key="normal" title="record"/>
-                                <connections>
-                                    <action selector="recode:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Qai-7U-UBc"/>
+                                    <action selector="btnCameraRoll:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xCt-bc-YEk"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="ORl-Ah-bYp" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.0334821" id="1k3-PQ-uCH"/>
-                            <constraint firstItem="tZH-gD-ClW" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="2Fh-86-Zbd"/>
-                            <constraint firstItem="ORl-Ah-bYp" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Lhu-H1-M3E"/>
+                            <constraint firstItem="iam-2D-d3y" firstAttribute="top" secondItem="B2U-wx-aqA" secondAttribute="bottom" constant="30" id="Q8Y-dR-COe"/>
                             <constraint firstItem="iam-2D-d3y" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Z3j-7o-VkD"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ORl-Ah-bYp" secondAttribute="bottom" constant="30" id="bsD-Cm-16T"/>
-                            <constraint firstItem="fPo-oH-TIz" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="h3u-2t-R31"/>
                             <constraint firstItem="iam-2D-d3y" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="kXk-dv-65h"/>
-                            <constraint firstItem="fPo-oH-TIz" firstAttribute="top" secondItem="tZH-gD-ClW" secondAttribute="bottom" constant="20" id="qtI-Bl-9w1"/>
-                            <constraint firstItem="ORl-Ah-bYp" firstAttribute="top" secondItem="fPo-oH-TIz" secondAttribute="bottom" constant="25" id="sGF-jd-f9T"/>
+                            <constraint firstItem="B2U-wx-aqA" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="zt3-FB-9b1"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="hhU-RS-RFH"/>
-                    <connections>
-                        <outlet property="playBtn" destination="tZH-gD-ClW" id="g6r-kn-p41"/>
-                        <outlet property="recodeBtn" destination="fPo-oH-TIz" id="19l-Rn-W0F"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -93,7 +83,7 @@
                                         <state key="normal" image="Back"/>
                                     </button>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nQF-Wp-JqB">
-                                        <rect key="frame" x="194" y="15" width="210" height="30"/>
+                                        <rect key="frame" x="164" y="15" width="240" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YwQ-A6-c0W">
                                                 <rect key="frame" x="0.0" y="2.5" width="30" height="25.5"/>
@@ -105,8 +95,18 @@
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <state key="normal" backgroundImage="pencil" catalog="system"/>
                                             </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ia5-fa-XzT">
+                                                <rect key="frame" x="30" y="2" width="30" height="25.5"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="Ia5-fa-XzT" secondAttribute="height" multiplier="1:1" id="0Ya-ac-RBU"/>
+                                                    <constraint firstAttribute="height" constant="30" id="F2i-2x-RO9"/>
+                                                    <constraint firstAttribute="width" constant="30" id="UnZ-jN-dVu"/>
+                                                </constraints>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" backgroundImage="line.diagonal.arrow" catalog="system"/>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgc-IC-dI3">
-                                                <rect key="frame" x="30" y="0.5" width="30" height="29"/>
+                                                <rect key="frame" x="60" y="0.5" width="30" height="29"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="Qgc-IC-dI3" secondAttribute="height" multiplier="1:1" id="8jN-nc-cir"/>
                                                     <constraint firstAttribute="width" constant="30" id="cwq-bj-djZ"/>
@@ -116,7 +116,7 @@
                                                 <state key="normal" backgroundImage="circle" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Kf-HG-PAV">
-                                                <rect key="frame" x="60" y="1" width="30" height="27.5"/>
+                                                <rect key="frame" x="90" y="1" width="30" height="27.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="0cH-30-LtC"/>
                                                     <constraint firstAttribute="width" constant="30" id="P2U-JV-UgC"/>
@@ -126,7 +126,7 @@
                                                 <state key="normal" backgroundImage="squareshape" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3J-Kb-1CQ">
-                                                <rect key="frame" x="90" y="-1" width="30" height="30.5"/>
+                                                <rect key="frame" x="120" y="-1" width="30" height="30.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="30" id="Bhz-Pd-BN7"/>
                                                     <constraint firstAttribute="width" secondItem="i3J-Kb-1CQ" secondAttribute="height" multiplier="1:1" id="Kln-f8-5Tn"/>
@@ -136,7 +136,7 @@
                                                 <state key="normal" backgroundImage="hand.raised" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oC5-ej-NbV">
-                                                <rect key="frame" x="120" y="1" width="30" height="28"/>
+                                                <rect key="frame" x="150" y="1" width="30" height="28"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="oC5-ej-NbV" secondAttribute="height" multiplier="1:1" id="cSj-Kc-UI4"/>
                                                     <constraint firstAttribute="width" constant="30" id="t8A-Bp-BKe"/>
@@ -146,7 +146,7 @@
                                                 <state key="normal" backgroundImage="magnifyingglass" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U2Q-Vq-Afr">
-                                                <rect key="frame" x="150" y="0.5" width="30" height="29"/>
+                                                <rect key="frame" x="180" y="0.5" width="30" height="29"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="9NR-Gv-bUR"/>
                                                     <constraint firstAttribute="width" constant="30" id="Zkx-he-T35"/>
@@ -156,7 +156,7 @@
                                                 <state key="normal" backgroundImage="drop" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xux-z4-1Cc">
-                                                <rect key="frame" x="180" y="0.0" width="30" height="28.5"/>
+                                                <rect key="frame" x="210" y="0.0" width="30" height="28.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="Xux-z4-1Cc" secondAttribute="height" multiplier="1:1" id="7LC-1O-4GM"/>
                                                     <constraint firstAttribute="height" constant="30" id="8PG-y5-Nlh"/>
@@ -424,8 +424,9 @@
                         <outlet property="btnBack" destination="uWt-Jl-6Rj" id="bTf-Yj-1n2"/>
                         <outlet property="btnCircle" destination="Qgc-IC-dI3" id="0l1-P9-x1t"/>
                         <outlet property="btnColor" destination="U2Q-Vq-Afr" id="5YQ-ja-rBB"/>
+                        <outlet property="btnDrawLine" destination="Ia5-fa-XzT" id="pGu-RK-EUN"/>
                         <outlet property="btnEraser" destination="Xux-z4-1Cc" id="tK5-va-8SZ"/>
-                        <outlet property="btnLine" destination="YwQ-A6-c0W" id="LO6-u9-Ab8"/>
+                        <outlet property="btnPencil" destination="YwQ-A6-c0W" id="2qk-yz-myg"/>
                         <outlet property="btnPlay" destination="ktr-4Q-6rz" id="pjw-da-eax"/>
                         <outlet property="btnPlayAudioRecord" destination="Ugv-pg-fx5" id="1XL-e0-Gal"/>
                         <outlet property="btnRecord" destination="aql-sK-C9y" id="wYN-cf-dk1"/>
@@ -472,6 +473,7 @@
         <image name="circle" catalog="system" width="128" height="121"/>
         <image name="drop" catalog="system" width="101" height="128"/>
         <image name="hand.raised" catalog="system" width="128" height="128"/>
+        <image name="line.diagonal.arrow" catalog="system" width="128" height="113"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
