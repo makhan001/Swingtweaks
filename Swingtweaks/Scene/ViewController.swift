@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     
     @IBAction func PlayVideo(_ sender: Any) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "CreateTweak" ) as! CreateTweakViewController
-        vc.videoUrl = Bundle.main.url(forResource: "videoApp", withExtension: "mp4")
+        vc.videoUrl = Bundle.main.url(forResource: "videoApp", withExtension: "mov")
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
