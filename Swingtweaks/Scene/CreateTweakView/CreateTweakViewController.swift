@@ -196,25 +196,25 @@ extension CreateTweakViewController {
         case btnPlayAudioRecord:
             recorder.doPlay()
         case btnSave:
-//            print("allVideoframes\(allVideoframes)")
-//            print("initial video frams count\(allVideoframes.count)")
-//            let startTime = Double(playerPauseTime) * Double(totalFPS)
-//            print("frame replce starttime \(startTime)")
-//
-//            let endTime = audioDuration(audioFileURL: recorder.fileUrl()) * Double(totalFPS)
-//            print("frame replce endTime \(endTime)")
-//
-//            for index in Int(startTime)...Int(endTime){
-//                allVideoframes.insert(imgFrames.image ?? UIImage(), at: index)
-//            }
-//            print("after add new frames video frams count\(allVideoframes.count)")
-//            createVideoWithImageArray()
-//
-//            guard let newVideoURL = videoUrl else {
-//                return
-//            }
-           //  self.mergeRecordedAudio(newVideoUrl: newVideoURL)
-          self.saveOverlayViewWithVideo()
+            //            print("allVideoframes\(allVideoframes)")
+            //            print("initial video frams count\(allVideoframes.count)")
+            //            let startTime = Double(playerPauseTime) * Double(totalFPS)
+            //            print("frame replce starttime \(startTime)")
+            //
+            //            let endTime = audioDuration(audioFileURL: recorder.fileUrl()) * Double(totalFPS)
+            //            print("frame replce endTime \(endTime)")
+            //
+            //            for index in Int(startTime)...Int(endTime){
+            //                allVideoframes.insert(imgFrames.image ?? UIImage(), at: index)
+            //            }
+            //            print("after add new frames video frams count\(allVideoframes.count)")
+            //            createVideoWithImageArray()
+            //
+            //            guard let newVideoURL = videoUrl else {
+            //                return
+            //            }
+            //  self.mergeRecordedAudio(newVideoUrl: newVideoURL)
+            self.saveOverlayViewWithVideo()
             //self.createVideoWithImageArray()
         default:
             break
@@ -537,7 +537,7 @@ extension CreateTweakViewController {
         imageAnimator.render() {
             print("yesMovieCretaed")
             print(settings.outputURL)
-           // self.mergeRecordedAudio(newVideoUrl: settings.outputURL)
+            // self.mergeRecordedAudio(newVideoUrl: settings.outputURL)
         }
     }
 }
