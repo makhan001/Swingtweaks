@@ -11,6 +11,7 @@ import AVKit
 import Foundation
 import QuickLook
 import Photos
+import VideoEditor
 import ReplayKit
 
 class CreateTweakViewController: UIViewController {
@@ -28,15 +29,20 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnRecord:UIButton!
     @IBOutlet weak var btnCircle:UIButton!
     @IBOutlet weak var btnSquare:UIButton!
-    @IBOutlet weak var imgFrames:UIImageView!
     @IBOutlet weak var btnSpeedHalf:UIButton!
     @IBOutlet weak var btnSpeedNormal:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
     @IBOutlet weak var btnAnnotationShapes:UIButton!
-    @IBOutlet weak var btnPlayAudioRecord:UIButton!
     @IBOutlet weak var btnDrawLine:UIButton!
-    @IBOutlet weak var timeLbl:UILabel!
+    @IBOutlet weak var btnBackward:UIButton!
+    @IBOutlet weak var btnSwingTweak:UIButton!
+    //Hide UI
+    @IBOutlet weak var toolsStackView:UIStackView!
+    @IBOutlet weak var recordingBottomView:UIView!
+    @IBOutlet weak var playBottomView:UIView!
+    @IBOutlet weak var saveDeleteBottomView:UIView!
+    @IBOutlet weak var SwingTweakBottomView:UIView!
     
     var videoUrl: URL?
     var playerVedioRate:Float = 1.0
@@ -44,9 +50,13 @@ class CreateTweakViewController: UIViewController {
     var playerController: AVPlayerViewController?
     let screenRecorder = RPScreenRecorder.shared()
     
+    var playerPauseTime:Float64 = 0.0
+    var audioDurationTime:Float64 = 0.0
+    var isPlaying: Bool {
+        return player?.rate != 0 && player?.error == nil
+    }
     //  Tools Editors
-    
-    var allVideoframes:[UIImage] = []
+    var assetsGenerator:AVAssetImageGenerator!
     //Tools Setup
     lazy var drawingView: DrawsanaView = {
         let drawingView = DrawsanaView()
@@ -70,15 +80,22 @@ class CreateTweakViewController: UIViewController {
         super.viewDidLoad()
         SetUp()
         btnSave.isUserInteractionEnabled = false
-        player?.addProgressObserver { progress in
-            self.timeLbl.text = String(progress)
-        }
+        self.showHideBottomTopView(isHidden: true)
+    }
+    func showHideBottomTopView(isHidden: Bool) {
+        self.toolsStackView.isHidden = isHidden
+        self.recordingBottomView.isHidden = !isHidden
+        self.saveDeleteBottomView.isHidden = isHidden
+        self.SwingTweakBottomView.isHidden = !isHidden
+        self.btnRecord.isHidden = isHidden
+        self.btnBackward.isHidden = isHidden
+        self.btnPlay.isUserInteractionEnabled = !isHidden
     }
 }
 
 extension CreateTweakViewController{
     private func SetUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnPlayAudioRecord, btnSave, btnDrawLine].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnDrawLine, btnSwingTweak].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -89,7 +106,9 @@ extension CreateTweakViewController{
             return
         }
         setVideo(url: newurl)
+        
     }
+    
     @objc func restartVideo() {
         player?.pause()
         player?.currentItem?.seek(to: CMTime.zero, completionHandler: { _ in
@@ -121,12 +140,14 @@ extension CreateTweakViewController{
     private func setVideo(url: URL) {
         removePlayer()
         player = AVPlayer(url: url)
+        playerController = AVPlayerViewController()
         playerController?.player = player
         player?.allowsExternalPlayback = true
         player?.usesExternalPlaybackWhileExternalScreenIsActive = true
         self.videoView.addSubview((playerController?.view)!)
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
         player?.currentItem?.audioTimePitchAlgorithm = .timeDomain
+        
     }
 }
 
@@ -170,26 +191,58 @@ extension CreateTweakViewController {
             speedSelectionAction(speedretio:4, speed: 1/4)
         case btnSpeedOneEight:
             speedSelectionAction(speedretio:8, speed: 1/8)
-        case btnPlayAudioRecord:
-            print("")
         case btnSave:
-            stopRecording()
+            print("btnSave")
+            // stopRecording()
+        case btnSwingTweak:
+            print("SwingTK")
+            self.swingTweakButtonAction()
         default:
             break
         }
     }
+    func swingTweakButtonAction() {
+        self.showHideBottomTopView(isHidden: false)
+        self.recordingBottomView.isHidden = false
+    }
     private func playAction() {
-        startRecording()
+        if self.btnPlay.isSelected {
+            //Stop recording
+            self.btnPlay.isSelected = false
+            self.stopRecording()
+        }
+        else {
+            //Start recording
+            self.btnPlay.isSelected = true
+            showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
+                if value == "Yes" {
+                    self.startRecording(isMicrophoneEnabled: true)
+                }
+                else{
+                    self.startRecording(isMicrophoneEnabled: false)
+                    
+                }
+            }
+        }
     }
     
     private func speedAction() {
         ViewSpeed.isHidden = false
     }
     private func recordAction() {
-        self.isAudioAdded = true
-        self.btnSave.isUserInteractionEnabled = true
-        self.btnSave.backgroundColor = .blue
-        player?.pause()
+        if self.btnRecord.isSelected {
+            screenRecorder.isMicrophoneEnabled = false
+            self.btnRecord.isSelected = false
+        }
+        else{
+            screenRecorder.isMicrophoneEnabled = true
+            self.btnRecord.isSelected = true
+        }
+//        self.isAudioAdded = true
+//        self.btnSave.isUserInteractionEnabled = true
+//        self.btnSave.backgroundColor = .blue
+//        player?.pause()
+//        print(playerPauseTime)
     }
     private func lineAction() {
         self.toolsSetup(toolIndex: 0)
@@ -239,7 +292,7 @@ extension CreateTweakViewController {
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
         drawingView.translatesAutoresizingMaskIntoConstraints = false
-        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(100).bottom(-100) }
+        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(100).bottom(-140) }
     }
 }
 
@@ -269,72 +322,50 @@ extension CreateTweakViewController: ColorPickerViewControllerDelegate {
 
 extension CreateTweakViewController: RPPreviewViewControllerDelegate {
     
-    func startRecording() {
+    func startRecording(isMicrophoneEnabled:Bool) {
         guard screenRecorder.isAvailable else {
             print("Recording is not available at this time.")
             return
         }
-        screenRecorder.isMicrophoneEnabled = true
-        //        if micToggle.isOn {
-        //            screenRecorder.isMicrophoneEnabled = true
-        //        } else {
-        //            screenRecorder.isMicrophoneEnabled = false
-        //        }
+        screenRecorder.isMicrophoneEnabled = isMicrophoneEnabled
         screenRecorder.startRecording{ [unowned self] (error) in
-            
             guard error == nil else {
                 print("There was an error starting the recording.")
                 return
             }
-            
             print("Started Recording Successfully")
-            //            self.micToggle.isEnabled = false
-            //            self.recordButton.backgroundColor = UIColor.red
-            //            self.statusLabel.text = "Recording..."
-            //            self.statusLabel.textColor = UIColor.red
-            //            self.isRecording = true
         }
     }
     
     func stopRecording() {
         screenRecorder.stopRecording { [unowned self] (preview, error) in
-            print("Stopped recording")
             guard preview != nil else {
                 print("Preview controller is not available.")
                 return
             }
-            let alert = UIAlertController(title: "Recording Finished", message: "Would you like to edit or delete your recording?", preferredStyle: .alert)
-            
-            let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-                self.screenRecorder.discardRecording(handler: { () -> Void in
-                    print("Recording suffessfully deleted.")
-                })
-            })
-            let editAction = UIAlertAction(title: "Edit", style: .default, handler: { (action: UIAlertAction) -> Void in
-                preview?.previewControllerDelegate = self
-                self.present(preview!, animated: true, completion: nil)
-            })
-            alert.addAction(editAction)
-            alert.addAction(deleteAction)
-            self.present(alert, animated: true, completion: nil)
-            // self.isRecording = false
-            // self.viewReset()
+            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
+                if value == "Edit" {
+                    preview?.previewControllerDelegate = self
+                    self.present(preview!, animated: true, completion: nil)
+                }
+                else{
+                    self.screenRecorder.discardRecording(handler: { () -> Void in
+                        print("Recording suffessfully deleted.")
+                    })
+                }
+            }
         }
     }
     
     func previewControllerDidFinish(_ previewController: RPPreviewViewController) {
         dismiss(animated: true)
+        var dialogMessage = UIAlertController(title: "Confirm", message: "Your recording stored in galary", preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+            self.navigationController?.popViewController(animated: true)         })
+        dialogMessage.addAction(ok)
+        self.present(dialogMessage, animated: true, completion: nil)
+
+       
     }
 }
 
-extension AVPlayer {
-    func addProgressObserver(action:@escaping ((Double) -> Void)) -> Any {
-        return self.addPeriodicTimeObserver(forInterval: CMTime.init(value: 1, timescale: 1), queue: .main, using: { time in
-            if let duration = self.currentItem?.duration {
-                let duration = CMTimeGetSeconds(duration), time = CMTimeGetSeconds(time)
-                let progress = (time)
-                action(progress)
-            }
-        })
-    }
-}

@@ -389,4 +389,25 @@ extension UIViewController {
         }
        }
       }
+    
+  
+    func showTwoButtonAlert(title:String, message:String, firstBtnTitle:String,  SecondBtnTitle:String, completion:@escaping ((String)->Void)) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title:firstBtnTitle , style: .default){ (action) in
+          completion(firstBtnTitle)
+        }
+        let cancelAction = UIAlertAction(title: SecondBtnTitle, style: .cancel){ (action) in
+          completion(SecondBtnTitle)
+        }
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
+      }
+    
+
+
+
+
+
+
 }
