@@ -315,7 +315,6 @@ public class VideoGenerator: NSObject {
     let composition = AVMutableComposition()
     
     if let completeMoviePath = completeMoviePath {
-      
       /// add audio and video tracks to the composition
       if let videoTrack: AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid), let audioTrack: AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid) {
         

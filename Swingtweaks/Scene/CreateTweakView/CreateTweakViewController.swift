@@ -45,6 +45,7 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var SwingTweakBottomView:UIView!
     
     var videoUrl: URL?
+    var videoOutputURL: URL?
     var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
@@ -76,6 +77,10 @@ class CreateTweakViewController: UIViewController {
     private let addOverlayEditor = addOverlayImageLibrary()
     var isToolAdded:Bool = false
     var isAudioAdded:Bool = false
+    
+    var recordigURLsArray:[URL] = []
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
@@ -193,7 +198,6 @@ extension CreateTweakViewController {
             speedSelectionAction(speedretio:8, speed: 1/8)
         case btnSave:
             print("btnSave")
-            // stopRecording()
         case btnSwingTweak:
             print("SwingTK")
             self.swingTweakButtonAction()
@@ -209,7 +213,12 @@ extension CreateTweakViewController {
         if self.btnPlay.isSelected {
             //Stop recording
             self.btnPlay.isSelected = false
-            self.stopRecording()
+           // self.stopRecording()
+            if #available(iOS 14.0, *) {
+                self.stopRecordingCreateVideo()
+            } else {
+                // Fallback on earlier versions
+            }
         }
         else {
             //Start recording
@@ -357,15 +366,46 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
         }
     }
     
+    @available(iOS 14.0, *)
+    func stopRecordingCreateVideo() {
+        self.videoOutputURL = tempURL()
+        print("videoOutputURL",self.videoOutputURL)
+        if self.videoOutputURL != nil {
+            self.recordigURLsArray.append(self.videoOutputURL!)
+        }
+        self.screenRecorder.stopRecording(withOutput: self.videoOutputURL!) { (errorVideo) in
+            print("ErrorVideo", errorVideo)
+            if errorVideo == nil {
+                self.saveVideoToPhotos(newVideoURL: self.videoOutputURL!)
+            }
+        }
+        print("recordigURLsArrayCount", self.recordigURLsArray.count)
+    }
+    func tempURL() -> URL? {
+        let directory = NSTemporaryDirectory() as NSString
+        if directory != "" {
+            let path = directory.appendingPathComponent(NSUUID().uuidString + ".mp4")
+            return URL(fileURLWithPath: path)
+        }
+        return nil
+    }
+    func saveMultipleVideoSetup() {
+        
+    }
+    func saveVideoToPhotos(newVideoURL: URL) {
+        PHPhotoLibrary.shared().performChanges( {
+          PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: newVideoURL)
+        }) { [weak self] (isSaved, error) in
+          if isSaved {
+            print("Video saved.")
+          } else {
+            print("Cannot save video.")
+            print(error ?? "unknown error")
+          }
+        }
+    }
     func previewControllerDidFinish(_ previewController: RPPreviewViewController) {
         dismiss(animated: true)
-        var dialogMessage = UIAlertController(title: "Confirm", message: "Your recording stored in galary", preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-            self.navigationController?.popViewController(animated: true)         })
-        dialogMessage.addAction(ok)
-        self.present(dialogMessage, animated: true, completion: nil)
-
-       
     }
 }
 
