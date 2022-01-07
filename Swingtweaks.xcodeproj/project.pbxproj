@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		245B8A99482F389CE726697A /* Pods_Swingtweaks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45FA5178011CFC496B28516C /* Pods_Swingtweaks.framework */; };
+		5FD5472E2788484F000B80AE /* ToolItemCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD5472D2788484F000B80AE /* ToolItemCollectionView.swift */; };
+		5FD5473727884978000B80AE /* ToolsItemCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD5473527884978000B80AE /* ToolsItemCollectionCell.swift */; };
+		5FD5473827884978000B80AE /* ToolsItemCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5FD5473627884978000B80AE /* ToolsItemCollectionCell.xib */; };
 		5FF206342785697F00EE1A43 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF206332785697F00EE1A43 /* Constant.swift */; };
 		8884534327720163001E22B9 /* videoApp.mov in Resources */ = {isa = PBXBuildFile; fileRef = 8884534227720163001E22B9 /* videoApp.mov */; };
 		8884537827720400001E22B9 /* DrawingTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88845348277203FF001E22B9 /* DrawingTool.swift */; };
@@ -71,6 +74,9 @@
 /* Begin PBXFileReference section */
 		0A98992D7F0CB71404586297 /* Pods-Swingtweaks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swingtweaks.debug.xcconfig"; path = "Target Support Files/Pods-Swingtweaks/Pods-Swingtweaks.debug.xcconfig"; sourceTree = "<group>"; };
 		45FA5178011CFC496B28516C /* Pods_Swingtweaks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swingtweaks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FD5472D2788484F000B80AE /* ToolItemCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolItemCollectionView.swift; sourceTree = "<group>"; };
+		5FD5473527884978000B80AE /* ToolsItemCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsItemCollectionCell.swift; sourceTree = "<group>"; };
+		5FD5473627884978000B80AE /* ToolsItemCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToolsItemCollectionCell.xib; sourceTree = "<group>"; };
 		5FF206332785697F00EE1A43 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		8884534227720163001E22B9 /* videoApp.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = videoApp.mov; sourceTree = "<group>"; };
 		88845348277203FF001E22B9 /* DrawingTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingTool.swift; sourceTree = "<group>"; };
@@ -155,6 +161,24 @@
 				BE694C8C617380F3F319A8B2 /* Pods-Swingtweaks.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		5FD5472C2788482E000B80AE /* Collection */ = {
+			isa = PBXGroup;
+			children = (
+				5FD5472D2788484F000B80AE /* ToolItemCollectionView.swift */,
+				5FD5472F278848CE000B80AE /* Cell */,
+			);
+			path = Collection;
+			sourceTree = "<group>";
+		};
+		5FD5472F278848CE000B80AE /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				5FD5473527884978000B80AE /* ToolsItemCollectionCell.swift */,
+				5FD5473627884978000B80AE /* ToolsItemCollectionCell.xib */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		5FF206322785696E00EE1A43 /* Constant */ = {
@@ -386,6 +410,7 @@
 			isa = PBXGroup;
 			children = (
 				88BF91AC2761D20600488A15 /* CreateTweakViewController.swift */,
+				5FD5472C2788482E000B80AE /* Collection */,
 			);
 			path = CreateTweakView;
 			sourceTree = "<group>";
@@ -494,6 +519,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FD5473827884978000B80AE /* ToolsItemCollectionCell.xib in Resources */,
 				88BF919C2761CD3A00488A15 /* LaunchScreen.storyboard in Resources */,
 				88BF91992761CD3A00488A15 /* Assets.xcassets in Resources */,
 				88F628E6276B2B4B0056A87D /* .gitkeep in Resources */,
@@ -595,6 +621,7 @@
 				8884538927720400001E22B9 /* NgonShape.swift in Sources */,
 				8884538527720400001E22B9 /* Shape.swift in Sources */,
 				88BF91922761CD1000488A15 /* SceneDelegate.swift in Sources */,
+				5FD5473727884978000B80AE /* ToolsItemCollectionCell.swift in Sources */,
 				8884538C27720400001E22B9 /* StarShape.swift in Sources */,
 				8884537C27720400001E22B9 /* AngleTool.swift in Sources */,
 				8884539927720400001E22B9 /* CGFloat+DrawsanaExtensions.swift in Sources */,
@@ -604,6 +631,7 @@
 				88F628E9276B2B4B0056A87D /* ImageExtension.swift in Sources */,
 				88B09718277DD08700C8781B /* UIView+Extension.swift in Sources */,
 				8884538727720400001E22B9 /* LineShape.swift in Sources */,
+				5FD5472E2788484F000B80AE /* ToolItemCollectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

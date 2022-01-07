@@ -37,19 +37,22 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnDrawLine:UIButton!
     @IBOutlet weak var btnBackward:UIButton!
     @IBOutlet weak var btnSwingTweak:UIButton!
+    @IBOutlet weak var btnSeekPlay:UIButton!
     //Hide UI
     @IBOutlet weak var toolsStackView:UIStackView!
     @IBOutlet weak var recordingBottomView:UIView!
     @IBOutlet weak var playBottomView:UIView!
     @IBOutlet weak var saveDeleteBottomView:UIView!
     @IBOutlet weak var SwingTweakBottomView:UIView!
+    @IBOutlet weak var CollectionView:ToolItemCollectionView!
+
     
     var videoUrl: URL?
     var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
     let screenRecorder = RPScreenRecorder.shared()
-    
+    var tweakMode:Bool = false
     var playerPauseTime:Float64 = 0.0
     var audioDurationTime:Float64 = 0.0
     var isPlaying: Bool {
@@ -83,29 +86,32 @@ class CreateTweakViewController: UIViewController {
         self.showHideBottomTopView(isHidden: true)
     }
     func showHideBottomTopView(isHidden: Bool) {
-        self.toolsStackView.isHidden = isHidden
+        //self.toolsStackView.isHidden = isHidden
+        CollectionView.isHidden = isHidden
         self.recordingBottomView.isHidden = !isHidden
         self.saveDeleteBottomView.isHidden = isHidden
         self.SwingTweakBottomView.isHidden = !isHidden
         self.btnRecord.isHidden = isHidden
         self.btnBackward.isHidden = isHidden
-        self.btnPlay.isUserInteractionEnabled = !isHidden
+      //  self.btnPlay.isUserInteractionEnabled = !isHidden
     }
 }
 
 extension CreateTweakViewController{
     private func SetUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnDrawLine, btnSwingTweak].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnDrawLine, btnSwingTweak, btnSeekPlay].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
         player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-        playerController?.showsPlaybackControls = true
         playerController?.hidesBottomBarWhenPushed = true
         guard let newurl =  videoUrl else {
             return
         }
         setVideo(url: newurl)
+        
+        CollectionView.configure()
+        self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
         
     }
     
@@ -141,6 +147,7 @@ extension CreateTweakViewController{
         removePlayer()
         player = AVPlayer(url: url)
         playerController = AVPlayerViewController()
+        playerController?.showsPlaybackControls = false
         playerController?.player = player
         player?.allowsExternalPlayback = true
         player?.usesExternalPlaybackWhileExternalScreenIsActive = true
@@ -197,31 +204,57 @@ extension CreateTweakViewController {
         case btnSwingTweak:
             print("SwingTK")
             self.swingTweakButtonAction()
+        case btnSeekPlay:
+            btnSeekPlayAction()
         default:
             break
         }
     }
+    func btnSeekPlayAction() {
+        if self.btnSeekPlay.isSelected {
+            player?.pause()
+            self.btnSeekPlay.isSelected = false
+        }
+        else{
+            player?.play()
+            self.btnSeekPlay.isSelected = true
+        }
+    }
     func swingTweakButtonAction() {
+        tweakMode = true
         self.showHideBottomTopView(isHidden: false)
         self.recordingBottomView.isHidden = false
     }
     private func playAction() {
-        if self.btnPlay.isSelected {
-            //Stop recording
-            self.btnPlay.isSelected = false
-            self.stopRecording()
+        if tweakMode == true {
+            if self.btnPlay.isSelected {
+                //Stop recording
+                self.btnPlay.isSelected = false
+                self.stopRecording()
+            }
+            else {
+                //Start recording
+                self.btnPlay.isSelected = true
+                self.startRecording(isMicrophoneEnabled: true)
+//                showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
+//                    if value == "Yes" {
+//                        self.startRecording(isMicrophoneEnabled: true)
+//                    }
+//                    else{
+//                        self.startRecording(isMicrophoneEnabled: false)
+//
+//                    }
+//                }
+            }
         }
-        else {
-            //Start recording
-            self.btnPlay.isSelected = true
-            showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
-                if value == "Yes" {
-                    self.startRecording(isMicrophoneEnabled: true)
-                }
-                else{
-                    self.startRecording(isMicrophoneEnabled: false)
-                    
-                }
+        else{
+            if self.btnPlay.isSelected {
+                player?.pause()
+                self.btnPlay.isSelected = false
+            }
+            else{
+                player?.play()
+                self.btnPlay.isSelected = true
             }
         }
     }
@@ -238,11 +271,11 @@ extension CreateTweakViewController {
             screenRecorder.isMicrophoneEnabled = true
             self.btnRecord.isSelected = true
         }
-//        self.isAudioAdded = true
-//        self.btnSave.isUserInteractionEnabled = true
-//        self.btnSave.backgroundColor = .blue
-//        player?.pause()
-//        print(playerPauseTime)
+        //        self.isAudioAdded = true
+        //        self.btnSave.isUserInteractionEnabled = true
+        //        self.btnSave.backgroundColor = .blue
+        //        player?.pause()
+        //        print(playerPauseTime)
     }
     private func lineAction() {
         self.toolsSetup(toolIndex: 0)
@@ -264,6 +297,7 @@ extension CreateTweakViewController {
     }
     private func eraserAction() {
         self.toolsSetup(toolIndex: 3)
+        drawingView.userSettings.strokeWidth = strokeWidths[2]
     }
     private func drawLineAction() {
         self.toolsSetup(toolIndex: 4)
@@ -287,7 +321,7 @@ extension CreateTweakViewController {
         Drawing.debugSerialization = true
         drawingView.set(tool: tools[toolIndex])
         drawingView.backgroundColor = .clear
-        drawingView.userSettings.strokeColor = Constants.colors.first!
+        drawingView.userSettings.strokeColor = Constants.colors[1]!
         drawingView.userSettings.fillColor = Constants.colors.last!
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
@@ -343,17 +377,19 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
                 print("Preview controller is not available.")
                 return
             }
-            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
-                if value == "Edit" {
-                    preview?.previewControllerDelegate = self
-                    self.present(preview!, animated: true, completion: nil)
-                }
-                else{
-                    self.screenRecorder.discardRecording(handler: { () -> Void in
-                        print("Recording suffessfully deleted.")
-                    })
-                }
-            }
+            preview?.previewControllerDelegate = self
+            self.present(preview!, animated: true, completion: nil)
+//            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
+//                if value == "Edit" {
+//                    preview?.previewControllerDelegate = self
+//                    self.present(preview!, animated: true, completion: nil)
+//                }
+//                else{
+//                    self.screenRecorder.discardRecording(handler: { () -> Void in
+//                        print("Recording suffessfully deleted.")
+//                    })
+//                }
+//            }
         }
     }
     
@@ -364,8 +400,38 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
             self.navigationController?.popViewController(animated: true)         })
         dialogMessage.addAction(ok)
         self.present(dialogMessage, animated: true, completion: nil)
-
-       
+        
+        
     }
 }
 
+
+// MARK: Closure Callback
+extension CreateTweakViewController {
+    func didSelectToolsAtIndex(_ index: Int) {
+        switch index {
+        case 0:
+            self.lineAction()
+            saveBtnInitialSetup()
+        case 1:
+            self.drawLineAction()
+            saveBtnInitialSetup()
+        case 2:
+            self.circleAction()
+            saveBtnInitialSetup()
+        case 3:
+            self.rectangleAction()
+            saveBtnInitialSetup()
+        case 4:
+            self.AnnotationShapesAction()
+        case 5:
+            self.zoomAction()
+        case 6:
+            self.colorAction()
+        case 7:
+            self.eraserAction()
+        default:
+            print("pencil")
+        }
+    }
+}
