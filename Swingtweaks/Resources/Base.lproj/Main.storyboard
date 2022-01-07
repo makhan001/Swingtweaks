@@ -94,6 +94,7 @@
                                                 </constraints>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <state key="normal" backgroundImage="pencil" catalog="system"/>
+                                                <state key="selected" image="pencil" catalog="system"/>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ia5-fa-XzT">
                                                 <rect key="frame" x="30" y="2" width="30" height="25.5"/>
@@ -289,14 +290,14 @@
                                                 <rect key="frame" x="138" y="0.0" width="138" height="100"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ktr-4Q-6rz">
-                                                        <rect key="frame" x="34" y="15.5" width="70" height="69"/>
+                                                        <rect key="frame" x="34" y="15" width="70" height="70"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="70" id="GAt-MG-pql"/>
                                                             <constraint firstAttribute="width" constant="70" id="rRk-MG-VzS"/>
                                                         </constraints>
-                                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" backgroundImage="play.circle.fill" catalog="system"/>
-                                                        <state key="selected" backgroundImage="pause.circle.fill" catalog="system"/>
+                                                        <color key="tintColor" systemColor="systemRedColor"/>
+                                                        <state key="normal" backgroundImage="play"/>
+                                                        <state key="selected" backgroundImage="pause"/>
                                                     </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -487,9 +488,9 @@
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
-        <image name="pause.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="pause" width="30" height="30"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
-        <image name="play.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="play" width="24" height="24"/>
         <image name="sparkles.rectangle.stack.fill" catalog="system" width="128" height="122"/>
         <image name="sparkles.square.fill.on.square" catalog="system" width="128" height="113"/>
         <image name="square.and.pencil" catalog="system" width="128" height="115"/>
@@ -497,6 +498,9 @@
         <image name="xmark.bin.fill" catalog="system" width="128" height="93"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
