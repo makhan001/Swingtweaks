@@ -22,14 +22,16 @@ class ToolItemCollectionView: UICollectionView {
                       ToolsItems( toolName: "ST_Search", isSelected: false),
                       ToolsItems( toolName: "ST_Paintpalette", isSelected: false),
                       ToolsItems( toolName: "ST_Eraser", isSelected: false)]
+    var isStrokeColor:Bool = false
     var didSelectToolsAtIndex:((Int) -> Void)?
-    
+    var didSelectColorAtIndex:((Int) -> Void)?
     override func awakeFromNib() {
         super.awakeFromNib()
     }
     
-    func configure() {
+    func configure(strokeColor:Bool) {
         self.register(UINib(nibName: "ToolsItemCollectionCell", bundle: nil), forCellWithReuseIdentifier: "ToolsItemCollectionCell")
+        isStrokeColor = strokeColor
         self.delegate = self
         self.dataSource = self
         layoutIfNeeded()
@@ -39,14 +41,24 @@ class ToolItemCollectionView: UICollectionView {
 
 extension ToolItemCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if isStrokeColor {
+            return Constants.colors.count
+        }
+        else{
         return toolsItems.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = self.dequeueReusableCell(withReuseIdentifier: "ToolsItemCollectionCell", for: indexPath) as? ToolsItemCollectionCell else {
             return UICollectionViewCell()
         }
-        cell.configure(tools: toolsItems[indexPath.row])
+        if isStrokeColor{
+            cell.colorConfigure(Index: indexPath.row)
+        }
+        else{
+            cell.configure(tools: toolsItems[indexPath.row])
+        }
         return cell
     }
     
@@ -56,6 +68,10 @@ extension ToolItemCollectionView: UICollectionViewDelegate, UICollectionViewData
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if isStrokeColor {
+            self.didSelectColorAtIndex?(indexPath.item)
+        }
+        else{
         self.didSelectToolsAtIndex?(indexPath.item)
         for index in 0..<toolsItems.count{
             if indexPath.row == index{
@@ -70,6 +86,7 @@ extension ToolItemCollectionView: UICollectionViewDelegate, UICollectionViewData
             }
         }
         collectionView.reloadData()
+        }
     }
 }
 

@@ -37,7 +37,7 @@ public class DrawsanaView: UIView {
   /// You may set this object's properties and they will be forwarded to the
   /// active tool and applied to new shapes.
   public let userSettings = UserSettings(
-    strokeColor: .blue,
+    strokeColor: .white,
     fillColor: .yellow,
     strokeWidth: 20,
     fontName: "Helvetica Neue",

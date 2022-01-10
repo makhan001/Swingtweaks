@@ -17,10 +17,15 @@ class ToolsItemCollectionCell: UICollectionViewCell {
     }
     func configure(tools:ToolsItems){
         imageIcon.image = UIImage(named: tools.toolName)
+        imageIcon.backgroundColor =  .clear
         if tools.isSelected == true {
             imageIcon.tintColor = .red
         } else {
             imageIcon.tintColor = .white
         }
+    }
+    func colorConfigure(Index:Int){
+        imageIcon.tintColor = .clear
+        imageIcon.backgroundColor = Constants.colors[Index]
     }
 }

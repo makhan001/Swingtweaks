@@ -338,91 +338,6 @@
                                         </constraints>
                                         <state key="normal" image="Back"/>
                                     </button>
-                                    <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nQF-Wp-JqB">
-                                        <rect key="frame" x="164" y="25" width="240" height="30"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YwQ-A6-c0W">
-                                                <rect key="frame" x="0.0" y="2.5" width="30" height="25.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="8TH-TT-cvh"/>
-                                                    <constraint firstAttribute="width" secondItem="YwQ-A6-c0W" secondAttribute="height" multiplier="1:1" id="PUR-E0-4HV"/>
-                                                    <constraint firstAttribute="width" constant="30" id="g8a-IY-wnO"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="pencil" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ia5-fa-XzT">
-                                                <rect key="frame" x="30" y="2" width="30" height="25.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" secondItem="Ia5-fa-XzT" secondAttribute="height" multiplier="1:1" id="0Ya-ac-RBU"/>
-                                                    <constraint firstAttribute="height" constant="30" id="F2i-2x-RO9"/>
-                                                    <constraint firstAttribute="width" constant="30" id="UnZ-jN-dVu"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="line.diagonal.arrow" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qgc-IC-dI3">
-                                                <rect key="frame" x="60" y="0.5" width="30" height="29"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" secondItem="Qgc-IC-dI3" secondAttribute="height" multiplier="1:1" id="8jN-nc-cir"/>
-                                                    <constraint firstAttribute="width" constant="30" id="cwq-bj-djZ"/>
-                                                    <constraint firstAttribute="height" constant="30" id="n2W-Z8-nqX"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="circle" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Kf-HG-PAV">
-                                                <rect key="frame" x="90" y="1" width="30" height="27.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="0cH-30-LtC"/>
-                                                    <constraint firstAttribute="width" constant="30" id="P2U-JV-UgC"/>
-                                                    <constraint firstAttribute="width" secondItem="2Kf-HG-PAV" secondAttribute="height" multiplier="1:1" id="z0J-4E-WUr"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="squareshape" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3J-Kb-1CQ">
-                                                <rect key="frame" x="120" y="-1" width="30" height="30.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="30" id="Bhz-Pd-BN7"/>
-                                                    <constraint firstAttribute="width" secondItem="i3J-Kb-1CQ" secondAttribute="height" multiplier="1:1" id="Kln-f8-5Tn"/>
-                                                    <constraint firstAttribute="height" constant="30" id="xh5-tE-DH8"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="hand.raised" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oC5-ej-NbV">
-                                                <rect key="frame" x="150" y="0.5" width="30" height="28.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" secondItem="oC5-ej-NbV" secondAttribute="height" multiplier="1:1" id="cSj-Kc-UI4"/>
-                                                    <constraint firstAttribute="width" constant="30" id="t8A-Bp-BKe"/>
-                                                    <constraint firstAttribute="height" constant="30" id="ubP-5c-Htj"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="magnifyingglass" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U2Q-Vq-Afr">
-                                                <rect key="frame" x="180" y="0.5" width="30" height="29"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="30" id="9NR-Gv-bUR"/>
-                                                    <constraint firstAttribute="width" constant="30" id="Zkx-he-T35"/>
-                                                    <constraint firstAttribute="width" secondItem="U2Q-Vq-Afr" secondAttribute="height" multiplier="1:1" id="f5k-cA-PMM"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="drop" catalog="system"/>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xux-z4-1Cc">
-                                                <rect key="frame" x="210" y="0.0" width="30" height="28.5"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" secondItem="Xux-z4-1Cc" secondAttribute="height" multiplier="1:1" id="7LC-1O-4GM"/>
-                                                    <constraint firstAttribute="height" constant="30" id="8PG-y5-Nlh"/>
-                                                    <constraint firstAttribute="width" constant="30" id="HHH-wm-nSz"/>
-                                                </constraints>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="square.and.pencil" catalog="system"/>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
                                     <collectionView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zJ8-Ed-Zt9" customClass="ToolItemCollectionView" customModule="Swingtweaks" customModuleProvider="target">
                                         <rect key="frame" x="134" y="20" width="270" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -441,8 +356,6 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="nQF-Wp-JqB" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="Hig-F6-MyT"/>
-                                    <constraint firstAttribute="trailing" secondItem="nQF-Wp-JqB" secondAttribute="trailing" constant="10" id="Lu9-bt-CE5"/>
                                     <constraint firstItem="uWt-Jl-6Rj" firstAttribute="leading" secondItem="tZj-S0-4cf" secondAttribute="leading" id="ZKn-9S-7IY"/>
                                     <constraint firstItem="zJ8-Ed-Zt9" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="aPe-XT-sTM"/>
                                     <constraint firstAttribute="trailing" secondItem="zJ8-Ed-Zt9" secondAttribute="trailing" constant="10" id="aiN-6e-ROY"/>
@@ -475,14 +388,8 @@
                         <outlet property="CollectionView" destination="zJ8-Ed-Zt9" id="BXJ-7U-sd2"/>
                         <outlet property="SwingTweakBottomView" destination="cB4-fs-yl0" id="pHm-iT-Hqn"/>
                         <outlet property="ViewSpeed" destination="dSD-hn-mC7" id="kB8-R3-0LC"/>
-                        <outlet property="btnAnnotationShapes" destination="i3J-Kb-1CQ" id="cGg-Pu-pGT"/>
                         <outlet property="btnBack" destination="uWt-Jl-6Rj" id="bTf-Yj-1n2"/>
                         <outlet property="btnBackward" destination="0TW-vX-Zjj" id="IhI-fG-XnW"/>
-                        <outlet property="btnCircle" destination="Qgc-IC-dI3" id="0l1-P9-x1t"/>
-                        <outlet property="btnColor" destination="U2Q-Vq-Afr" id="5YQ-ja-rBB"/>
-                        <outlet property="btnDrawLine" destination="Ia5-fa-XzT" id="pGu-RK-EUN"/>
-                        <outlet property="btnEraser" destination="Xux-z4-1Cc" id="tK5-va-8SZ"/>
-                        <outlet property="btnPencil" destination="YwQ-A6-c0W" id="2qk-yz-myg"/>
                         <outlet property="btnPlay" destination="ktr-4Q-6rz" id="pjw-da-eax"/>
                         <outlet property="btnRecord" destination="aql-sK-C9y" id="wYN-cf-dk1"/>
                         <outlet property="btnSave" destination="5vl-et-pTY" id="4lR-Xa-XbW"/>
@@ -492,13 +399,10 @@
                         <outlet property="btnSpeedNormal" destination="I6r-OM-VSS" id="JLk-qU-dXl"/>
                         <outlet property="btnSpeedOneEight" destination="y3K-OG-SYf" id="sIX-I7-dUg"/>
                         <outlet property="btnSpeedOneFourth" destination="0tr-00-oad" id="VAV-Zf-ppQ"/>
-                        <outlet property="btnSquare" destination="2Kf-HG-PAV" id="dVx-4b-RR9"/>
                         <outlet property="btnSwingTweak" destination="CTB-En-V3C" id="uuu-FJ-rle"/>
-                        <outlet property="btnZoom" destination="oC5-ej-NbV" id="XmV-Fj-j1Y"/>
                         <outlet property="playBottomView" destination="VhT-xu-8QP" id="uAN-F5-Ig9"/>
                         <outlet property="recordingBottomView" destination="UAP-2t-9NE" id="lKd-wv-uan"/>
                         <outlet property="saveDeleteBottomView" destination="tQN-Tr-Bco" id="1Mq-xx-aEr"/>
-                        <outlet property="toolsStackView" destination="nQF-Wp-JqB" id="Exh-bF-uwz"/>
                         <outlet property="videoView" destination="JhW-Op-UJn" id="gtx-F6-Ops"/>
                     </connections>
                 </viewController>
@@ -530,20 +434,12 @@
     <resources>
         <image name="Back" width="26" height="24"/>
         <image name="arrowshape.turn.up.backward.fill" catalog="system" width="128" height="106"/>
-        <image name="circle" catalog="system" width="128" height="121"/>
-        <image name="drop" catalog="system" width="101" height="128"/>
-        <image name="hand.raised" catalog="system" width="128" height="128"/>
-        <image name="line.diagonal.arrow" catalog="system" width="128" height="113"/>
-        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
         <image name="pause.circle.fill" catalog="system" width="128" height="121"/>
-        <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="play.circle.fill" catalog="system" width="128" height="121"/>
         <image name="sparkles.rectangle.stack.fill" catalog="system" width="128" height="122"/>
         <image name="sparkles.square.fill.on.square" catalog="system" width="128" height="113"/>
-        <image name="square.and.pencil" catalog="system" width="128" height="115"/>
-        <image name="squareshape" catalog="system" width="128" height="114"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="93"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -8,6 +8,6 @@
 import Foundation
 import UIKit
 struct Constants {
-    static let colors: [UIColor?] = [.black,.white,.red,.orange,.yellow,
-                                     .green,.blue,.purple,.brown,.gray,nil]
+    static let colors: [UIColor?] = [.white,.black,.red,.orange,.yellow,
+                                     .green,.blue,.purple,.gray,nil]
 }

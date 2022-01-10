@@ -19,33 +19,24 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var videoView:UIView!
     @IBOutlet weak var btnBack:UIButton!
     @IBOutlet weak var btnPlay:UIButton!
-    @IBOutlet weak var btnPencil:UIButton!
-    @IBOutlet weak var btnZoom:UIButton!
     @IBOutlet weak var ViewSpeed:UIView!
     @IBOutlet weak var btnSave:UIButton!
     @IBOutlet weak var btnSpeed:UIButton!
-    @IBOutlet weak var btnColor:UIButton!
-    @IBOutlet weak var btnEraser:UIButton!
     @IBOutlet weak var btnRecord:UIButton!
-    @IBOutlet weak var btnCircle:UIButton!
-    @IBOutlet weak var btnSquare:UIButton!
     @IBOutlet weak var btnSpeedHalf:UIButton!
     @IBOutlet weak var btnSpeedNormal:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
-    @IBOutlet weak var btnAnnotationShapes:UIButton!
-    @IBOutlet weak var btnDrawLine:UIButton!
     @IBOutlet weak var btnBackward:UIButton!
     @IBOutlet weak var btnSwingTweak:UIButton!
     @IBOutlet weak var btnSeekPlay:UIButton!
     //Hide UI
-    @IBOutlet weak var toolsStackView:UIStackView!
     @IBOutlet weak var recordingBottomView:UIView!
     @IBOutlet weak var playBottomView:UIView!
     @IBOutlet weak var saveDeleteBottomView:UIView!
     @IBOutlet weak var SwingTweakBottomView:UIView!
     @IBOutlet weak var CollectionView:ToolItemCollectionView!
-
+    
     
     var videoUrl: URL?
     var playerVedioRate:Float = 1.0
@@ -86,20 +77,18 @@ class CreateTweakViewController: UIViewController {
         self.showHideBottomTopView(isHidden: true)
     }
     func showHideBottomTopView(isHidden: Bool) {
-        //self.toolsStackView.isHidden = isHidden
         CollectionView.isHidden = isHidden
         self.recordingBottomView.isHidden = !isHidden
         self.saveDeleteBottomView.isHidden = isHidden
         self.SwingTweakBottomView.isHidden = !isHidden
         self.btnRecord.isHidden = isHidden
         self.btnBackward.isHidden = isHidden
-      //  self.btnPlay.isUserInteractionEnabled = !isHidden
     }
 }
 
 extension CreateTweakViewController{
     private func SetUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnPencil, btnCircle, btnSquare, btnAnnotationShapes, btnZoom, btnColor, btnEraser, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnDrawLine, btnSwingTweak, btnSeekPlay].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -109,10 +98,8 @@ extension CreateTweakViewController{
             return
         }
         setVideo(url: newurl)
-        
-        CollectionView.configure()
+        CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
-        
     }
     
     @objc func restartVideo() {
@@ -163,6 +150,7 @@ extension CreateTweakViewController {
     @objc func buttonPressed(_ sender: UIButton) {
         switch  sender {
         case btnBack:
+            removePlayer()
             self.navigationController?.popViewController(animated: true)
         case btnPlay:
             self.playAction()
@@ -170,26 +158,6 @@ extension CreateTweakViewController {
             self.speedAction()
         case btnRecord :
             self.recordAction()
-        case btnPencil:
-            self.lineAction()
-            saveBtnInitialSetup()
-        case btnDrawLine:
-            drawLineAction()
-            saveBtnInitialSetup()
-        case btnCircle:
-            self.circleAction()
-            saveBtnInitialSetup()
-        case btnSquare:
-            self.rectangleAction()
-            saveBtnInitialSetup()
-        case btnAnnotationShapes:
-            self.AnnotationShapesAction()
-        case btnZoom:
-            self.zoomAction()
-        case btnColor:
-            self.colorAction()
-        case btnEraser:
-            self.eraserAction()
         case btnSpeedHalf:
             speedSelectionAction(speedretio:2, speed: 1/2)
         case btnSpeedNormal:
@@ -222,6 +190,7 @@ extension CreateTweakViewController {
     }
     func swingTweakButtonAction() {
         tweakMode = true
+        player?.isMuted = true
         self.showHideBottomTopView(isHidden: false)
         self.recordingBottomView.isHidden = false
     }
@@ -236,15 +205,15 @@ extension CreateTweakViewController {
                 //Start recording
                 self.btnPlay.isSelected = true
                 self.startRecording(isMicrophoneEnabled: true)
-//                showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
-//                    if value == "Yes" {
-//                        self.startRecording(isMicrophoneEnabled: true)
-//                    }
-//                    else{
-//                        self.startRecording(isMicrophoneEnabled: false)
-//
-//                    }
-//                }
+                //                showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
+                //                    if value == "Yes" {
+                //                        self.startRecording(isMicrophoneEnabled: true)
+                //                    }
+                //                    else{
+                //                        self.startRecording(isMicrophoneEnabled: false)
+                //
+                //                    }
+                //                }
             }
         }
         else{
@@ -293,7 +262,8 @@ extension CreateTweakViewController {
         print("zoomAction")
     }
     private func colorAction() {
-        print("colorAction")
+        CollectionView.configure(strokeColor:true)
+        self.CollectionView.didSelectColorAtIndex = didSelectColorAtIndex
     }
     private func eraserAction() {
         self.toolsSetup(toolIndex: 3)
@@ -321,7 +291,7 @@ extension CreateTweakViewController {
         Drawing.debugSerialization = true
         drawingView.set(tool: tools[toolIndex])
         drawingView.backgroundColor = .clear
-        drawingView.userSettings.strokeColor = Constants.colors[1]!
+       // drawingView.userSettings.strokeColor = Constants.colors[1]!
         drawingView.userSettings.fillColor = Constants.colors.last!
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
@@ -379,17 +349,17 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
             }
             preview?.previewControllerDelegate = self
             self.present(preview!, animated: true, completion: nil)
-//            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
-//                if value == "Edit" {
-//                    preview?.previewControllerDelegate = self
-//                    self.present(preview!, animated: true, completion: nil)
-//                }
-//                else{
-//                    self.screenRecorder.discardRecording(handler: { () -> Void in
-//                        print("Recording suffessfully deleted.")
-//                    })
-//                }
-//            }
+            //            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
+            //                if value == "Edit" {
+            //                    preview?.previewControllerDelegate = self
+            //                    self.present(preview!, animated: true, completion: nil)
+            //                }
+            //                else{
+            //                    self.screenRecorder.discardRecording(handler: { () -> Void in
+            //                        print("Recording suffessfully deleted.")
+            //                    })
+            //                }
+            //            }
         }
     }
     
@@ -400,14 +370,12 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
             self.navigationController?.popViewController(animated: true)         })
         dialogMessage.addAction(ok)
         self.present(dialogMessage, animated: true, completion: nil)
-        
-        
     }
 }
 
-
 // MARK: Closure Callback
 extension CreateTweakViewController {
+  
     func didSelectToolsAtIndex(_ index: Int) {
         switch index {
         case 0:
@@ -433,5 +401,14 @@ extension CreateTweakViewController {
         default:
             print("pencil")
         }
+    }
+}
+// MARK: Color Closure Callback
+extension CreateTweakViewController {
+  
+    func didSelectColorAtIndex(_ index: Int) {
+        drawingView.userSettings.strokeColor = Constants.colors[index]
+        CollectionView.configure(strokeColor: false)
+        self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
     }
 }
