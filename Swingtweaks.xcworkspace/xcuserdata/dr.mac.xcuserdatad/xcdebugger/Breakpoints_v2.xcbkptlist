@@ -26,8 +26,8 @@
             filePath = "Swingtweaks/Scene/CreateTweakView/CreateTweakViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "367"
-            endingLineNumber = "367"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
             landmarkName = "previewControllerDidFinish(_:)"
             landmarkType = "7">
          </BreakpointContent>

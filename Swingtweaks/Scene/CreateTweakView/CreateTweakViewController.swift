@@ -29,14 +29,19 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
     @IBOutlet weak var btnBackward:UIButton!
     @IBOutlet weak var btnSwingTweak:UIButton!
-    @IBOutlet weak var btnSeekPlay:UIButton!
     //Hide UI
     @IBOutlet weak var recordingBottomView:UIView!
     @IBOutlet weak var playBottomView:UIView!
     @IBOutlet weak var saveDeleteBottomView:UIView!
     @IBOutlet weak var SwingTweakBottomView:UIView!
     @IBOutlet weak var CollectionView:ToolItemCollectionView!
-    
+    //Play Seek UI
+    @IBOutlet weak var playBackSlider: UISlider!
+    @IBOutlet weak var lblVideoStartTime: UILabel!
+    @IBOutlet weak var lblVideoEndTime: UILabel!
+    @IBOutlet weak var btnPreviousPlay:UIButton!
+    @IBOutlet weak var btnNextPlay:UIButton!
+    @IBOutlet weak var btnSeekPlay:UIButton!
     
     var videoUrl: URL?
     var playerVedioRate:Float = 1.0
@@ -76,6 +81,10 @@ class CreateTweakViewController: UIViewController {
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
     }
+    @IBAction func playSliderValueChanged(_ sender: UISlider) {
+        self.seekSliderDragged(seekSlider: sender)
+    }
+    
     func showHideBottomTopView(isHidden: Bool) {
         CollectionView.isHidden = isHidden
         self.recordingBottomView.isHidden = !isHidden
@@ -100,6 +109,7 @@ extension CreateTweakViewController{
         setVideo(url: newurl)
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
+        setSeekBarSetup()
     }
     
     @objc func restartVideo() {
@@ -141,7 +151,6 @@ extension CreateTweakViewController{
         self.videoView.addSubview((playerController?.view)!)
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
         player?.currentItem?.audioTimePitchAlgorithm = .timeDomain
-        
     }
 }
 
@@ -173,21 +182,12 @@ extension CreateTweakViewController {
             print("SwingTK")
             self.swingTweakButtonAction()
         case btnSeekPlay:
-            btnSeekPlayAction()
+            seekPlayAction()
         default:
             break
         }
     }
-    func btnSeekPlayAction() {
-        if self.btnSeekPlay.isSelected {
-            player?.pause()
-            self.btnSeekPlay.isSelected = false
-        }
-        else{
-            player?.play()
-            self.btnSeekPlay.isSelected = true
-        }
-    }
+    
     func swingTweakButtonAction() {
         tweakMode = true
         player?.isMuted = true
@@ -283,6 +283,45 @@ extension CreateTweakViewController {
         btnSave.isUserInteractionEnabled = true
         btnSave.backgroundColor = .blue
     }
+    func seekPlayAction() {
+        if self.btnSeekPlay.isSelected {
+            self.player?.pause()
+            self.btnSeekPlay.isSelected = false
+            
+        }
+        else {
+            self.player?.play()
+            self.btnSeekPlay.isSelected = true
+        }
+    }
+    func setSeekBarSetup() {
+        let interval = CMTime(seconds: 0.1,
+                              preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        // Queue on which to invoke the callback
+        let mainQueue = DispatchQueue.main
+        self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
+            let currentSeconds = CMTimeGetSeconds(currentTime)
+            guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
+            let totalSeconds = CMTimeGetSeconds(duration)
+            self?.lblVideoStartTime.text = self?.stringFromTimeInterval(interval: currentSeconds)
+            self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: totalSeconds)
+            let progress: Float = Float(currentSeconds/totalSeconds)
+            print("Progressss",progress)
+            self?.playBackSlider.value = Float (progress)
+        })
+    }
+    
+    func seekSliderDragged(seekSlider: UISlider) {
+        if let duration = player?.currentItem?.duration {
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(seekSlider.value) * totalSeconds
+            let seekTime = CMTime(value: Int64(value), timescale: 1)
+            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+                //perhaps do something later here
+                print("completedSeek",completedSeek)
+            })
+        }
+    }
     
 }
 extension CreateTweakViewController {
@@ -291,7 +330,7 @@ extension CreateTweakViewController {
         Drawing.debugSerialization = true
         drawingView.set(tool: tools[toolIndex])
         drawingView.backgroundColor = .clear
-       // drawingView.userSettings.strokeColor = Constants.colors[1]!
+        // drawingView.userSettings.strokeColor = Constants.colors[1]!
         drawingView.userSettings.fillColor = Constants.colors.last!
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
@@ -375,7 +414,7 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
 
 // MARK: Closure Callback
 extension CreateTweakViewController {
-  
+    
     func didSelectToolsAtIndex(_ index: Int) {
         switch index {
         case 0:
@@ -405,7 +444,7 @@ extension CreateTweakViewController {
 }
 // MARK: Color Closure Callback
 extension CreateTweakViewController {
-  
+    
     func didSelectColorAtIndex(_ index: Int) {
         drawingView.userSettings.strokeColor = Constants.colors[index]
         CollectionView.configure(strokeColor: false)
