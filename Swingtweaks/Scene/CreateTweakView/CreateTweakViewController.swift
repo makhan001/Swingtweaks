@@ -44,6 +44,7 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnSeekPlay:UIButton!
     
     var videoUrl: URL?
+    var videoOutputURL: URL?
     var playerVedioRate:Float = 1.0
     var player: AVPlayer?
     var playerController: AVPlayerViewController?
@@ -207,7 +208,11 @@ extension CreateTweakViewController {
             if self.btnPlay.isSelected {
                 //Stop recording
                 self.btnPlay.isSelected = false
-                self.stopRecording()
+                if #available(iOS 14.0, *) {
+                    self.stopRecordingCreateVideo()
+                } else {
+                    // Fallback on earlier versions
+                }
             }
             else {
                 //Start recording
@@ -351,6 +356,37 @@ extension CreateTweakViewController {
             })
         }
     }
+    @available(iOS 14.0, *)
+    func stopRecordingCreateVideo() {
+        self.videoOutputURL = tempURL(movieType: ".mov")
+        print("videoOutputURL",self.videoOutputURL)
+        self.screenRecorder.stopRecording(withOutput: self.videoOutputURL!) { (errorVideo) in
+            print("ErrorVideo", errorVideo)
+            if errorVideo == nil {
+                DispatchQueue.main.async {
+                    self.moveToPreviewController()
+                }
+            }
+        }
+    }
+    func tempURL(movieType: String) -> URL? {
+        let directory = NSTemporaryDirectory() as NSString
+        if directory != "" {
+            let path = directory.appendingPathComponent(NSUUID().uuidString + movieType)
+            return URL(fileURLWithPath: path)
+        }
+        return nil
+    }
+    func moveToPreviewController() {
+        let previewViewController = self.storyboard?.instantiateViewController(withIdentifier: "PreviewViewController") as! PreviewViewController
+        previewViewController.videoOutputURL = self.videoOutputURL
+        previewViewController.getPreviewVc = { response in
+            if response == "Ok" {
+                self.navigationController?.popViewController(animated: false)
+            }
+        }
+        self.navigationController?.present(previewViewController, animated: true, completion: nil)
+    }
     
 }
 extension CreateTweakViewController {
@@ -433,11 +469,6 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
     
     func previewControllerDidFinish(_ previewController: RPPreviewViewController) {
         dismiss(animated: true)
-        var dialogMessage = UIAlertController(title: "Confirm", message: "Your recording stored in galary", preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-            self.navigationController?.popViewController(animated: true)         })
-        dialogMessage.addAction(ok)
-        self.present(dialogMessage, animated: true, completion: nil)
     }
 }
 

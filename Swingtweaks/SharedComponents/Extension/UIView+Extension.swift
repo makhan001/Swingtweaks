@@ -403,6 +403,14 @@ extension UIViewController {
         alert.addAction(cancelAction)
         self.present(alert, animated: true, completion: nil)
       }
+    func showOneButtonAlert(title:String, message:String, firstBtnTitle:String,    completion:@escaping ((String)->Void)) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title:firstBtnTitle , style: .default){ (action) in
+          completion(firstBtnTitle)
+        }
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+      }
     
     func stringFromTimeInterval(interval: TimeInterval) -> String {
         let interval = Int(interval)

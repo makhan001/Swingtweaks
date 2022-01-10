@@ -69,6 +69,7 @@
 		88F628EA276B2B4B0056A87D /* VideoGeneratorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F628E5276B2B4B0056A87D /* VideoGeneratorError.swift */; };
 		88F628ED276B2D060056A87D /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F628EC276B2D060056A87D /* LoadingView.swift */; };
 		88F628F2276B73090056A87D /* AGAudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F628F1276B73090056A87D /* AGAudioRecorder.swift */; };
+		B78D7789278C6F0600CD25D1 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78D7788278C6F0600CD25D1 /* PreviewViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,6 +140,7 @@
 		88F628E5276B2B4B0056A87D /* VideoGeneratorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoGeneratorError.swift; sourceTree = "<group>"; };
 		88F628EC276B2D060056A87D /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		88F628F1276B73090056A87D /* AGAudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGAudioRecorder.swift; sourceTree = "<group>"; };
+		B78D7788278C6F0600CD25D1 /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		BE694C8C617380F3F319A8B2 /* Pods-Swingtweaks.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swingtweaks.release.xcconfig"; path = "Target Support Files/Pods-Swingtweaks/Pods-Swingtweaks.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -378,6 +380,7 @@
 		88BF91A42761CE5A00488A15 /* Scene */ = {
 			isa = PBXGroup;
 			children = (
+				B78D7787278C6F0600CD25D1 /* PreviewController */,
 				88BF91932761CD1000488A15 /* ViewController.swift */,
 				88BF91AA2761D19200488A15 /* CreateTweakView */,
 			);
@@ -458,6 +461,14 @@
 				45FA5178011CFC496B28516C /* Pods_Swingtweaks.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B78D7787278C6F0600CD25D1 /* PreviewController */ = {
+			isa = PBXGroup;
+			children = (
+				B78D7788278C6F0600CD25D1 /* PreviewViewController.swift */,
+			);
+			path = PreviewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -626,6 +637,7 @@
 				8884537C27720400001E22B9 /* AngleTool.swift in Sources */,
 				8884539927720400001E22B9 /* CGFloat+DrawsanaExtensions.swift in Sources */,
 				8884537D27720400001E22B9 /* DragHandler.swift in Sources */,
+				B78D7789278C6F0600CD25D1 /* PreviewViewController.swift in Sources */,
 				8884538027720400001E22B9 /* PenTool_EraserTool.swift in Sources */,
 				8884538127720400001E22B9 /* DrawingToolForShapeWithTwoPoints.swift in Sources */,
 				88F628E9276B2B4B0056A87D /* ImageExtension.swift in Sources */,
