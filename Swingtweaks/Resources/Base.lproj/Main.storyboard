@@ -305,27 +305,30 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L4C-IA-gt7">
                                         <rect key="frame" x="10" y="10" width="394" height="30"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cmN-HT-iw8">
-                                                <rect key="frame" x="30" y="8" width="60" height="14"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cmN-HT-iw8">
+                                                <rect key="frame" x="30" y="8" width="55" height="14"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="60" id="iM5-DE-H4H"/>
+                                                    <constraint firstAttribute="width" constant="55" id="JJN-fX-P7b"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="12"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="YjR-wc-btI">
-                                                <rect key="frame" x="98" y="0.0" width="153" height="31"/>
+                                                <rect key="frame" x="93" y="0.0" width="163" height="31"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" systemColor="systemRedColor"/>
+                                                <color key="minimumTrackTintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="maximumTrackTintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="thumbTintColor" systemColor="systemRedColor"/>
                                                 <connections>
                                                     <action selector="playSliderValueChanged:" destination="AIc-Iz-Ino" eventType="valueChanged" id="axZ-Cv-38N"/>
                                                 </connections>
                                             </slider>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zjz-fN-Ou8">
-                                                <rect key="frame" x="259" y="8" width="60" height="14"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zjz-fN-Ou8">
+                                                <rect key="frame" x="264" y="8" width="55" height="14"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="60" id="xiU-QM-hpN"/>
+                                                    <constraint firstAttribute="width" constant="55" id="Wz0-E6-M0e"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="12"/>
                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -337,12 +340,12 @@
                                                     <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czS-yk-ETW">
                                                         <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="ST_Search"/>
+                                                        <state key="normal" image="privious"/>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lgs-Ny-ua1">
                                                         <rect key="frame" x="30" y="0.0" width="30" height="30"/>
                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="ST_Square"/>
+                                                        <state key="normal" image="next"/>
                                                     </button>
                                                 </subviews>
                                                 <constraints>
@@ -355,8 +358,8 @@
                                                     <constraint firstAttribute="width" constant="20" id="L2r-BM-WmH"/>
                                                     <constraint firstAttribute="height" constant="20" id="Ufy-70-bhf"/>
                                                 </constraints>
-                                                <state key="normal" backgroundImage="play"/>
-                                                <state key="selected" backgroundImage="pause"/>
+                                                <state key="normal" backgroundImage="playerplay"/>
+                                                <state key="selected" backgroundImage="playerpause"/>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemGray3Color"/>
@@ -506,15 +509,15 @@
     </scenes>
     <resources>
         <image name="Back" width="26" height="24"/>
-        <image name="ST_Search" width="50" height="50"/>
-        <image name="ST_Square" width="50" height="50"/>
         <image name="arrowshape.turn.up.backward.fill" catalog="system" width="128" height="106"/>
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
-        <image name="pause" width="30" height="30"/>
+        <image name="next" width="16" height="16"/>
         <image name="pause.circle.fill" catalog="system" width="128" height="121"/>
-        <image name="play" width="24" height="24"/>
         <image name="play.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="playerpause" width="16" height="16"/>
+        <image name="playerplay" width="16" height="16"/>
+        <image name="privious" width="16" height="16"/>
         <image name="sparkles.rectangle.stack.fill" catalog="system" width="128" height="122"/>
         <image name="sparkles.square.fill.on.square" catalog="system" width="128" height="113"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="93"/>

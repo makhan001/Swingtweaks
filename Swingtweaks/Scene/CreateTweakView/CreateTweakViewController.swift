@@ -75,6 +75,8 @@ class CreateTweakViewController: UIViewController {
     private let addOverlayEditor = addOverlayImageLibrary()
     var isToolAdded:Bool = false
     var isAudioAdded:Bool = false
+    fileprivate let seekDuration: Float64 = 0.2
+
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
@@ -97,7 +99,7 @@ class CreateTweakViewController: UIViewController {
 
 extension CreateTweakViewController{
     private func SetUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay, btnNextPlay, btnPreviousPlay].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -110,6 +112,8 @@ extension CreateTweakViewController{
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
         setSeekBarSetup()
+        playBackSlider.setThumbImage(UIImage(named: "sliderButton"), for: .normal)
+        playBackSlider.setThumbImage(UIImage(named: "sliderButton"), for: .highlighted)
     }
     
     @objc func restartVideo() {
@@ -183,6 +187,10 @@ extension CreateTweakViewController {
             self.swingTweakButtonAction()
         case btnSeekPlay:
             seekPlayAction()
+        case btnNextPlay:
+            seekForword()
+        case btnPreviousPlay:
+            seekbackWord()
         default:
             break
         }
@@ -294,6 +302,26 @@ extension CreateTweakViewController {
             self.btnSeekPlay.isSelected = true
         }
     }
+    func seekForword() {
+        guard let duration  = player?.currentItem?.duration else{
+                return
+            }
+        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
+            let newTime = playerCurrentTime + seekDuration
+            if newTime < CMTimeGetSeconds(duration) {
+                let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+                player?.seek(to: time2)
+            }
+    }
+    func seekbackWord() {
+        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
+        var newTime = playerCurrentTime - seekDuration
+            if newTime < 0 {
+                newTime = 0
+            }
+        let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+        player?.seek(to: time2)
+    }
     func setSeekBarSetup() {
         let interval = CMTime(seconds: 0.1,
                               preferredTimescale: CMTimeScale(NSEC_PER_SEC))
@@ -304,7 +332,8 @@ extension CreateTweakViewController {
             guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
             let totalSeconds = CMTimeGetSeconds(duration)
             self?.lblVideoStartTime.text = self?.stringFromTimeInterval(interval: currentSeconds)
-            self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: totalSeconds)
+            let remainingTime = totalSeconds - currentSeconds
+            self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
             let progress: Float = Float(currentSeconds/totalSeconds)
             print("Progressss",progress)
             self?.playBackSlider.value = Float (progress)

@@ -18,6 +18,8 @@ class ToolsItemCollectionCell: UICollectionViewCell {
     func configure(tools:ToolsItems){
         imageIcon.image = UIImage(named: tools.toolName)
         imageIcon.backgroundColor =  .clear
+        imageIcon.borderColor = .clear
+        imageIcon.borderWidth = 1
         if tools.isSelected == true {
             imageIcon.tintColor = .red
         } else {
@@ -26,6 +28,8 @@ class ToolsItemCollectionCell: UICollectionViewCell {
     }
     func colorConfigure(Index:Int){
         imageIcon.tintColor = .clear
+        imageIcon.borderColor = .white
+        imageIcon.borderWidth = 1
         imageIcon.backgroundColor = Constants.colors[Index]
     }
 }
