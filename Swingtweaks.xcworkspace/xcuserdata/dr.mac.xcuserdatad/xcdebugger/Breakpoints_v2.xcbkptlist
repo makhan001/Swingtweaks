@@ -26,9 +26,9 @@
             filePath = "Swingtweaks/Scene/CreateTweakView/CreateTweakViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "435"
-            endingLineNumber = "435"
-            landmarkName = "previewControllerDidFinish(_:)"
+            startingLineNumber = "439"
+            endingLineNumber = "439"
+            landmarkName = "startRecording(isMicrophoneEnabled:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

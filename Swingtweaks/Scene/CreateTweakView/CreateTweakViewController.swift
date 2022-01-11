@@ -240,9 +240,13 @@ extension CreateTweakViewController {
             }
         }
     }
-    
+
     private func speedAction() {
         ViewSpeed.isHidden = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+            print("done")
+            self.ViewSpeed.isHidden = true
+        })
     }
     private func recordAction() {
         if self.btnRecord.isSelected {
