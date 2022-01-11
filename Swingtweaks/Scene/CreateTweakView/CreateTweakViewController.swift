@@ -193,6 +193,7 @@ extension CreateTweakViewController {
         case btnRecord :
             self.recordAction()
         case btnSpeedHalf:
+        
             speedSelectionAction(speedretio:2, speed: 1/2)
         case btnSpeedNormal:
             speedSelectionAction(speedretio:1, speed: 1/1)
@@ -223,6 +224,22 @@ extension CreateTweakViewController {
         self.showHideBottomTopView(isHidden: false)
         self.recordingBottomView.isHidden = false
         viewSeekBar.isHidden = false
+        lblVideoStartTime.isHidden = false
+        self.player?.seek(to: CMTime.zero)
+        player?.pause()
+        btnPlay.isSelected = false
+        btnSeekPlay.isSelected = false
+        updateRecoredBtn()
+    }
+    private func updateRecoredBtn() {
+        if tweakMode == true{
+            if btnPlay.isSelected == false{
+                btnPlay.setBackgroundImage(UIImage(named: "recording_on"), for: .normal)
+             }
+            else {
+                btnPlay.setBackgroundImage(UIImage(named: "recording_off"), for: .selected)
+             }
+        }
     }
     private func playAction() {
         if tweakMode == true {
@@ -234,6 +251,7 @@ extension CreateTweakViewController {
                 } else {
                     // Fallback on earlier versions
                 }
+                updateRecoredBtn()
             }
             else {
                 //Start recording
@@ -248,7 +266,9 @@ extension CreateTweakViewController {
                 //
                 //                    }
                 //                }
+                updateRecoredBtn()
             }
+         
         }
         else{
             if self.btnPlay.isSelected {
@@ -367,7 +387,7 @@ extension CreateTweakViewController {
             let currentSeconds = CMTimeGetSeconds(currentTime)
             guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
             let totalSeconds = CMTimeGetSeconds(duration)
-            self?.lblVideoStartTime.text =  String(format: "%.2f", currentSeconds)
+            self?.lblVideoStartTime.text =  String(format: "%.3f", currentSeconds)
             // let remainingTime = totalSeconds - currentSeconds
             // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
             let progress: Float = Float(currentSeconds/totalSeconds)
@@ -464,18 +484,30 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
     
     func startRecording(isMicrophoneEnabled:Bool) {
         guard screenRecorder.isAvailable else {
-            print("Recording is not available at this time.")
-            return
+          print("Recording is not available at this time.")
+          return
         }
         screenRecorder.isMicrophoneEnabled = isMicrophoneEnabled
-        screenRecorder.startRecording{ [unowned self] (error) in
+        if #available(iOS 15.0, *) {
+          screenRecorder.startRecording{ [unowned self] (error) in
             guard error == nil else {
-                print("There was an error starting the recording.")
-                return
+              print("There was an error starting the recording in 15")
+              return
             }
-            print("Started Recording Successfully")
+            print("Started Recording Successfully in 15")
+          }
+        } else {
+          screenRecorder.startRecording(withMicrophoneEnabled: isMicrophoneEnabled) {(error) in
+            guard error == nil else {
+              print("There was an error starting the recording 14 or less")
+              return
+            }
+            print("Started Recording Successfully in 14 or less")
+          }
         }
-    }
+      }
+
+
     
     func stopRecording() {
         screenRecorder.stopRecording { [unowned self] (preview, error) in

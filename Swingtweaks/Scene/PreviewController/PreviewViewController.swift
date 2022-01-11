@@ -34,6 +34,7 @@ class PreviewViewController: UIViewController {
     
     @IBAction func discardButtonAction(_ sender: UIButton) {
         self.dismiss(animated: false, completion: nil)
+        self.getPreviewVc!("Ok")
     }
     @IBAction func saveButtonAction(_ sender: UIButton) {
         self.saveVideoToLibrary(newVideoURL: videoOutputURL!)
