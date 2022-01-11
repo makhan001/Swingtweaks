@@ -113,8 +113,9 @@ extension CreateTweakViewController{
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
         setSeekBarSetup()
-        playBackSlider.setThumbImage(UIImage(named: "sliderButton"), for: .normal)
-        playBackSlider.setThumbImage(UIImage(named: "sliderButton"), for: .highlighted)
+        playBackSlider.setThumbImage(UIImage(named: "sliderDisselect"), for: .normal)
+        playBackSlider.setThumbImage(UIImage(named: "sliderSelect"), for: .highlighted)
+        self.seekSliderSetup()
     }
     
     @objc func restartVideo() {
@@ -125,6 +126,21 @@ extension CreateTweakViewController{
             self.ViewSpeed.isHidden = true
         })
     }
+    func seekSliderSetup() {
+        let stackTap = UITapGestureRecognizer(target: self, action: #selector(self.jumpSliderTapped(_:)))
+        self.playBackSlider?.isUserInteractionEnabled = true
+        self.playBackSlider?.addGestureRecognizer(stackTap)
+      }
+      @objc func jumpSliderTapped(_ sender: UITapGestureRecognizer) {
+        print("Jump Slider")
+        let pointTapped: CGPoint = sender.location(in: self.view)
+        let positionOfSlider: CGPoint = playBackSlider.frame.origin
+        let widthOfSlider: CGFloat = playBackSlider.frame.size.width
+        let newValue = ((pointTapped.x - positionOfSlider.x) * CGFloat(playBackSlider.maximumValue) / widthOfSlider)
+        playBackSlider.setValue(Float(newValue), animated: true)
+        self.seekSliderDragged(seekSlider: playBackSlider)
+      }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "rate", let player = object as? AVPlayer {
             if player.rate == 1 {
@@ -340,26 +356,28 @@ extension CreateTweakViewController {
             let currentSeconds = CMTimeGetSeconds(currentTime)
             guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
             let totalSeconds = CMTimeGetSeconds(duration)
-            self?.lblVideoStartTime.text = self?.stringFromTimeInterval(interval: currentSeconds)
-            let remainingTime = totalSeconds - currentSeconds
-            self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
+            self?.lblVideoStartTime.text =  String(format: "%.2f", currentSeconds)
+           // let remainingTime = totalSeconds - currentSeconds
+           // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
             let progress: Float = Float(currentSeconds/totalSeconds)
-            print("Progressss",progress)
             self?.playBackSlider.value = Float (progress)
         })
     }
     
     func seekSliderDragged(seekSlider: UISlider) {
         if let duration = player?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(seekSlider.value) * totalSeconds
-            let seekTime = CMTime(value: Int64(value), timescale: 1)
-            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
-                //perhaps do something later here
-                print("completedSeek",completedSeek)
-            })
+          let totalSeconds = CMTimeGetSeconds(duration)
+          let value = Float64(seekSlider.value) * totalSeconds
+          let seekTime = CMTime(value: Int64(value), timescale: 1)
+          player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            //perhaps do something later here
+            print("completedSeek",completedSeek)
+            self.player?.pause()
+            self.btnSeekPlay.isSelected = false
+          })
         }
-    }
+      }
+    
     @available(iOS 14.0, *)
     func stopRecordingCreateVideo() {
         self.videoOutputURL = tempURL(movieType: ".mov")
