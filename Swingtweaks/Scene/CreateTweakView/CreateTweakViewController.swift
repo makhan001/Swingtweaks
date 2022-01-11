@@ -42,6 +42,7 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnPreviousPlay:UIButton!
     @IBOutlet weak var btnNextPlay:UIButton!
     @IBOutlet weak var btnSeekPlay:UIButton!
+    @IBOutlet weak var viewSeekBar: UIView!
     
     var videoUrl: URL?
     var videoOutputURL: URL?
@@ -76,8 +77,8 @@ class CreateTweakViewController: UIViewController {
     private let addOverlayEditor = addOverlayImageLibrary()
     var isToolAdded:Bool = false
     var isAudioAdded:Bool = false
-    fileprivate let seekDuration: Float64 = 0.2
-
+    fileprivate let seekDuration: Float64 = 0.03
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
@@ -93,8 +94,8 @@ class CreateTweakViewController: UIViewController {
         self.recordingBottomView.isHidden = !isHidden
         self.saveDeleteBottomView.isHidden = isHidden
         self.SwingTweakBottomView.isHidden = !isHidden
-        self.btnRecord.isHidden = isHidden
-        self.btnBackward.isHidden = isHidden
+        self.btnRecord.isHidden = true
+        self.btnBackward.isHidden = true
     }
 }
 
@@ -109,6 +110,10 @@ extension CreateTweakViewController{
         guard let newurl =  videoUrl else {
             return
         }
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(restartVideo),
+                                               name: .AVPlayerItemDidPlayToEndTime,
+                                               object: self.player?.currentItem)
         setVideo(url: newurl)
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
@@ -119,9 +124,8 @@ extension CreateTweakViewController{
     }
     
     @objc func restartVideo() {
-        player?.pause()
         player?.currentItem?.seek(to: CMTime.zero, completionHandler: { _ in
-            self.player?.pause()
+            self.player?.play()
             self.player?.rate = self.playerVedioRate
             self.ViewSpeed.isHidden = true
         })
@@ -130,8 +134,8 @@ extension CreateTweakViewController{
         let stackTap = UITapGestureRecognizer(target: self, action: #selector(self.jumpSliderTapped(_:)))
         self.playBackSlider?.isUserInteractionEnabled = true
         self.playBackSlider?.addGestureRecognizer(stackTap)
-      }
-      @objc func jumpSliderTapped(_ sender: UITapGestureRecognizer) {
+    }
+    @objc func jumpSliderTapped(_ sender: UITapGestureRecognizer) {
         print("Jump Slider")
         let pointTapped: CGPoint = sender.location(in: self.view)
         let positionOfSlider: CGPoint = playBackSlider.frame.origin
@@ -139,7 +143,7 @@ extension CreateTweakViewController{
         let newValue = ((pointTapped.x - positionOfSlider.x) * CGFloat(playBackSlider.maximumValue) / widthOfSlider)
         playBackSlider.setValue(Float(newValue), animated: true)
         self.seekSliderDragged(seekSlider: playBackSlider)
-      }
+    }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "rate", let player = object as? AVPlayer {
@@ -218,6 +222,7 @@ extension CreateTweakViewController {
         player?.isMuted = true
         self.showHideBottomTopView(isHidden: false)
         self.recordingBottomView.isHidden = false
+        viewSeekBar.isHidden = false
     }
     private func playAction() {
         if tweakMode == true {
@@ -249,14 +254,16 @@ extension CreateTweakViewController {
             if self.btnPlay.isSelected {
                 player?.pause()
                 self.btnPlay.isSelected = false
+                self.btnSeekPlay.isSelected  = false
             }
             else{
                 player?.play()
                 self.btnPlay.isSelected = true
+                self.btnSeekPlay.isSelected  = true
             }
         }
     }
-
+    
     private func speedAction() {
         ViewSpeed.isHidden = false
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
@@ -320,31 +327,35 @@ extension CreateTweakViewController {
         if self.btnSeekPlay.isSelected {
             self.player?.pause()
             self.btnSeekPlay.isSelected = false
-            
+            if !tweakMode{ self.btnPlay.isSelected = false }
         }
         else {
             self.player?.play()
             self.btnSeekPlay.isSelected = true
+            if !tweakMode{ self.btnPlay.isSelected = true }
         }
     }
     func seekForword() {
+        player?.pause()
         guard let duration  = player?.currentItem?.duration else{
-                return
-            }
+            return
+        }
         let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
-            let newTime = playerCurrentTime + seekDuration
-            if newTime < CMTimeGetSeconds(duration) {
-                let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
-                player?.seek(to: time2)
-            }
+        let newTime = playerCurrentTime + seekDuration
+        if newTime < CMTimeGetSeconds(duration) {
+            let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+            player?.seek(to: time2)
+        }
     }
     func seekbackWord() {
+        player?.pause()
         let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
         var newTime = playerCurrentTime - seekDuration
-            if newTime < 0 {
-                newTime = 0
-            }
+        if newTime < 0 {
+            newTime = 0
+        }
         let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+        print("Backword \(time2)")
         player?.seek(to: time2)
     }
     func setSeekBarSetup() {
@@ -357,8 +368,8 @@ extension CreateTweakViewController {
             guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
             let totalSeconds = CMTimeGetSeconds(duration)
             self?.lblVideoStartTime.text =  String(format: "%.2f", currentSeconds)
-           // let remainingTime = totalSeconds - currentSeconds
-           // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
+            // let remainingTime = totalSeconds - currentSeconds
+            // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
             let progress: Float = Float(currentSeconds/totalSeconds)
             self?.playBackSlider.value = Float (progress)
         })
@@ -366,17 +377,17 @@ extension CreateTweakViewController {
     
     func seekSliderDragged(seekSlider: UISlider) {
         if let duration = player?.currentItem?.duration {
-          let totalSeconds = CMTimeGetSeconds(duration)
-          let value = Float64(seekSlider.value) * totalSeconds
-          let seekTime = CMTime(value: Int64(value), timescale: 1)
-          player?.seek(to: seekTime, completionHandler: { (completedSeek) in
-            //perhaps do something later here
-            print("completedSeek",completedSeek)
-            self.player?.pause()
-            self.btnSeekPlay.isSelected = false
-          })
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(seekSlider.value) * totalSeconds
+            let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
+            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+                //perhaps do something later here
+                print("completedSeek",completedSeek)
+                self.player?.pause()
+                self.btnSeekPlay.isSelected = false
+            })
         }
-      }
+    }
     
     @available(iOS 14.0, *)
     func stopRecordingCreateVideo() {
@@ -448,7 +459,6 @@ extension CreateTweakViewController: ColorPickerViewControllerDelegate {
         dismiss(animated: true, completion: nil)
     }
 }
-
 
 extension CreateTweakViewController: RPPreviewViewControllerDelegate {
     

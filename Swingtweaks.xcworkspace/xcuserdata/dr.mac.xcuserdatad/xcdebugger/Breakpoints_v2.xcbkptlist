@@ -19,16 +19,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "36C6ABF6-1601-4A03-A56A-D281AAFA9E4C"
+            uuid = "47948277-3088-410E-9802-CE23E9FD0670"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Swingtweaks/Scene/CreateTweakView/CreateTweakViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
-            landmarkName = "startRecording(isMicrophoneEnabled:)"
+            startingLineNumber = "349"
+            endingLineNumber = "349"
+            landmarkName = "seekForword()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
