@@ -380,9 +380,9 @@
 		88BF91A42761CE5A00488A15 /* Scene */ = {
 			isa = PBXGroup;
 			children = (
-				B78D7787278C6F0600CD25D1 /* PreviewController */,
 				88BF91932761CD1000488A15 /* ViewController.swift */,
 				88BF91AA2761D19200488A15 /* CreateTweakView */,
+				B78D7787278C6F0600CD25D1 /* PreviewController */,
 			);
 			path = Scene;
 			sourceTree = "<group>";

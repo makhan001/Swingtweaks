@@ -12,7 +12,6 @@ import AssetsLibrary
 import VideoEditor
 
 class ViewController: UIViewController {
-    
     var frames:[UIImage] = []
     var imagePicker = UIImagePickerController()
     override func viewDidLoad() {
@@ -38,9 +37,6 @@ extension ViewController : UIImagePickerControllerDelegate,
         settingsActionSheet.addAction(UIAlertAction(title:"Library", style:UIAlertAction.Style.default, handler:{ action in
             self.photoFromLibrary()
         }))
-        //    settingsActionSheet.addAction(UIAlertAction(title:Language.shared.stringForKey(key: Message.shared.K_Camera), style:UIAlertAction.Style.default, handler:{ action in
-        //      self.shootPhoto()
-        //    }))
         settingsActionSheet.addAction(UIAlertAction(title: "Cancel", style:UIAlertAction.Style.cancel, handler:nil))
         present(settingsActionSheet, animated:true, completion:nil)
     }

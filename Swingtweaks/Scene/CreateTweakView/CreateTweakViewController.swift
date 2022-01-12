@@ -38,12 +38,13 @@ class CreateTweakViewController: UIViewController {
     //Play Seek UI
     @IBOutlet weak var playBackSlider: UISlider!
     @IBOutlet weak var lblVideoStartTime: UILabel!
-    @IBOutlet weak var lblVideoEndTime: UILabel!
     @IBOutlet weak var btnPreviousPlay:UIButton!
     @IBOutlet weak var btnNextPlay:UIButton!
     @IBOutlet weak var btnSeekPlay:UIButton!
     @IBOutlet weak var viewSeekBar: UIView!
     
+    var lasttime:Double = 0.0
+    var currentTime:Double = 0.0
     var videoUrl: URL?
     var videoOutputURL: URL?
     var playerVedioRate:Float = 1.0
@@ -76,32 +77,36 @@ class CreateTweakViewController: UIViewController {
     ] }()
     private let addOverlayEditor = addOverlayImageLibrary()
     var isToolAdded:Bool = false
-    var isAudioAdded:Bool = false
-    fileprivate let seekDuration: Float64 = 0.03
     var value:Float64 = 0.0
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
         playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
-
+        
     }
     @IBAction func playSliderValueChanged(_ sender: UISlider) {
-       // self.seekSliderDragged(seekSlider: sender)
+        // self.seekSliderDragged(seekSlider: sender)
     }
     @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
             case .began:
-                print("began")
-                // handle drag began
+                print("")
+                print("begin with value \(slider.value)")
+                
             case .moved:
-                print("moved \(slider.value)")
-                self.seekSliderDragged(seekSlider: slider)
-                // handle drag moved
+                print("moved with value \(slider.value)")
+                
+                DispatchQueue.main.async {
+                    self.dragSlider(seekSlider: slider)
+                }
             case .ended:
-                print("ended")
+                player?.pause()
+                btnSeekPlay.isSelected = false
                 // handle drag ended
             default:
                 break
@@ -213,7 +218,7 @@ extension CreateTweakViewController {
         case btnRecord :
             self.recordAction()
         case btnSpeedHalf:
-        
+            
             speedSelectionAction(speedretio:2, speed: 1/2)
         case btnSpeedNormal:
             speedSelectionAction(speedretio:1, speed: 1/1)
@@ -230,9 +235,13 @@ extension CreateTweakViewController {
         case btnSeekPlay:
             seekPlayAction()
         case btnNextPlay:
-            seekForword()
+            DispatchQueue.main.async {
+                self.seekForword()
+            }
         case btnPreviousPlay:
-            seekbackWord()
+            DispatchQueue.main.async {
+                self.seekbackWord()
+            }
         default:
             break
         }
@@ -255,10 +264,10 @@ extension CreateTweakViewController {
         if tweakMode == true{
             if btnPlay.isSelected == false{
                 btnPlay.setBackgroundImage(UIImage(named: "recording_on"), for: .normal)
-             }
+            }
             else {
                 btnPlay.setBackgroundImage(UIImage(named: "recording_off"), for: .selected)
-             }
+            }
         }
     }
     private func playAction() {
@@ -269,7 +278,7 @@ extension CreateTweakViewController {
                 if #available(iOS 14.0, *) {
                     self.stopRecordingCreateVideo()
                 } else {
-                    // Fallback on earlier versions
+                    
                 }
                 updateRecoredBtn()
             }
@@ -277,18 +286,9 @@ extension CreateTweakViewController {
                 //Start recording
                 self.btnPlay.isSelected = true
                 self.startRecording(isMicrophoneEnabled: true)
-                //                showTwoButtonAlert(title: "Alert", message: "Do you also want to add audio?", firstBtnTitle: "Yes", SecondBtnTitle:"No") { value in
-                //                    if value == "Yes" {
-                //                        self.startRecording(isMicrophoneEnabled: true)
-                //                    }
-                //                    else{
-                //                        self.startRecording(isMicrophoneEnabled: false)
-                //
-                //                    }
-                //                }
                 updateRecoredBtn()
             }
-         
+            
         }
         else{
             if self.btnPlay.isSelected {
@@ -320,11 +320,6 @@ extension CreateTweakViewController {
             screenRecorder.isMicrophoneEnabled = true
             self.btnRecord.isSelected = true
         }
-        //        self.isAudioAdded = true
-        //        self.btnSave.isUserInteractionEnabled = true
-        //        self.btnSave.backgroundColor = .blue
-        //        player?.pause()
-        //        print(playerPauseTime)
     }
     private func lineAction() {
         self.toolsSetup(toolIndex: 0)
@@ -380,65 +375,54 @@ extension CreateTweakViewController {
         player?.pause()
         btnSeekPlay.isSelected = false
         player?.currentItem?.step(byCount: 1)
-//        guard let duration  = player?.currentItem?.duration else{
-//            return
-//        }
-//        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
-//        let newTime = playerCurrentTime + seekDuration
-//        if newTime < CMTimeGetSeconds(duration) {
-//            let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
-//            player?.seek(to: time2)
-//        }
     }
     func seekbackWord() {
         player?.pause()
         btnSeekPlay.isSelected = false
         player?.currentItem?.step(byCount: -1)
-
-//        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
-//        var newTime = playerCurrentTime - seekDuration
-//        if newTime < 0 {
-//            newTime = 0
-//        }
-//        let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
-//        print("Backword \(time2)")
-//        player?.seek(to: time2)
     }
     func setSeekBarSetup() {
         let interval = CMTime(seconds: 0.1,
-                   preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        // Queue on which to invoke the callback
+                              preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         let mainQueue = DispatchQueue.main
         self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
-          let currentSeconds = CMTimeGetSeconds(currentTime)
-          guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
-          let totalSeconds = CMTimeGetSeconds(duration)
-          self?.lblVideoStartTime.text = String(format: "%.3f", currentSeconds)
-          // let remainingTime = totalSeconds - currentSeconds
-          // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
-          let progress: Float = Float(currentSeconds/totalSeconds)
-          self?.playBackSlider.value = Float (progress)
+            let currentSeconds = CMTimeGetSeconds(currentTime)
+            guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
+            let totalSeconds = CMTimeGetSeconds(duration)
+            self?.lblVideoStartTime.text = String(format: "%.3f", currentSeconds)
+            let progress: Float = Float(currentSeconds/totalSeconds)
+            self?.playBackSlider.value = Float (progress)
         })
-      }
+    }
     
-
+    
     func seekSliderDragged(seekSlider: UISlider) {
-        
-       
         if let duration = player?.currentItem?.duration {
-          let totalSeconds = CMTimeGetSeconds(duration)
-          let value = Float64(seekSlider.value) * totalSeconds
-          self.lblVideoStartTime.text = String(format: "%.3f", value)
-          let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
-          player?.seek(to: seekTime, completionHandler: { (completedSeek) in
-            //perhaps do something later here
-            print("completedSeek",completedSeek)
+            let totalSeconds = CMTimeGetSeconds(duration)
+            let value = Float64(seekSlider.value) * totalSeconds
+            self.lblVideoStartTime.text = String(format: "%.3f", value)
+            
+            let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
+            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+                self.player?.pause()
+                self.btnSeekPlay.isSelected = false
+            })
+        }
+    }
+    func dragSlider(seekSlider: UISlider) {
+        DispatchQueue.main.async {
+            if self.currentTime >= self.lasttime {
+                self.player?.currentItem?.step(byCount: 1)
+            }
+            else{
+                self.player?.currentItem?.step(byCount: -1)
+            }
+            self.lasttime = self.currentTime
+            self.currentTime = Double(seekSlider.value)
             self.player?.pause()
             self.btnSeekPlay.isSelected = false
-          })
         }
-      }
-    
+    }
     
     @available(iOS 14.0, *)
     func stopRecordingCreateVideo() {
@@ -479,7 +463,6 @@ extension CreateTweakViewController {
         Drawing.debugSerialization = true
         drawingView.set(tool: tools[toolIndex])
         drawingView.backgroundColor = .clear
-        // drawingView.userSettings.strokeColor = Constants.colors[1]!
         drawingView.userSettings.fillColor = Constants.colors.last!
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
@@ -491,8 +474,7 @@ extension CreateTweakViewController {
 extension CreateTweakViewController: SelectionToolDelegate {
     func selectionToolDidTapOnAlreadySelectedShape(_ shape: ShapeSelectable) {
         if shape as? TextShape != nil {
-        
-
+            
         } else {
             drawingView.toolSettings.selectedShape = nil
         }
@@ -513,34 +495,34 @@ extension CreateTweakViewController: ColorPickerViewControllerDelegate {
     }
 }
 
+//Replaykit delegates
 extension CreateTweakViewController: RPPreviewViewControllerDelegate {
-    
     func startRecording(isMicrophoneEnabled:Bool) {
         guard screenRecorder.isAvailable else {
-          print("Recording is not available at this time.")
-          return
+            print("Recording is not available at this time.")
+            return
         }
         screenRecorder.isMicrophoneEnabled = isMicrophoneEnabled
         if #available(iOS 15.0, *) {
-          screenRecorder.startRecording{ [unowned self] (error) in
-            guard error == nil else {
-              print("There was an error starting the recording in 15")
-              return
+            screenRecorder.startRecording{ [unowned self] (error) in
+                guard error == nil else {
+                    print("There was an error starting the recording in 15")
+                    return
+                }
+                print("Started Recording Successfully in 15")
             }
-            print("Started Recording Successfully in 15")
-          }
         } else {
-          screenRecorder.startRecording(withMicrophoneEnabled: isMicrophoneEnabled) {(error) in
-            guard error == nil else {
-              print("There was an error starting the recording 14 or less")
-              return
+            screenRecorder.startRecording(withMicrophoneEnabled: isMicrophoneEnabled) {(error) in
+                guard error == nil else {
+                    print("There was an error starting the recording 14 or less")
+                    return
+                }
+                print("Started Recording Successfully in 14 or less")
             }
-            print("Started Recording Successfully in 14 or less")
-          }
         }
-      }
-
-
+    }
+    
+    
     
     func stopRecording() {
         screenRecorder.stopRecording { [unowned self] (preview, error) in
@@ -550,17 +532,6 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
             }
             preview?.previewControllerDelegate = self
             self.present(preview!, animated: true, completion: nil)
-            //            showTwoButtonAlert(title: "Recording Finished", message: "Would you like to edit or delete your recording?", firstBtnTitle: "Delete", SecondBtnTitle: "Edit") { value in
-            //                if value == "Edit" {
-            //                    preview?.previewControllerDelegate = self
-            //                    self.present(preview!, animated: true, completion: nil)
-            //                }
-            //                else{
-            //                    self.screenRecorder.discardRecording(handler: { () -> Void in
-            //                        print("Recording suffessfully deleted.")
-            //                    })
-            //                }
-            //            }
         }
     }
     
@@ -569,9 +540,11 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
     }
 }
 
+
+
+
 // MARK: Closure Callback
 extension CreateTweakViewController {
-    
     func didSelectToolsAtIndex(_ index: Int) {
         switch index {
         case 0:
@@ -601,7 +574,6 @@ extension CreateTweakViewController {
 }
 // MARK: Color Closure Callback
 extension CreateTweakViewController {
-    
     func didSelectColorAtIndex(_ index: Int) {
         drawingView.userSettings.strokeColor = Constants.colors[index]
         CollectionView.configure(strokeColor: false)
