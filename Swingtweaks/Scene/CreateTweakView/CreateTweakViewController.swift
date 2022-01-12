@@ -377,6 +377,7 @@ extension CreateTweakViewController {
     }
     func seekForword() {
         player?.pause()
+        btnPlay.isSelected = false
         player?.currentItem?.step(byCount: 1)
 //        guard let duration  = player?.currentItem?.duration else{
 //            return
@@ -390,7 +391,9 @@ extension CreateTweakViewController {
     }
     func seekbackWord() {
         player?.pause()
+        btnPlay.isSelected = false
         player?.currentItem?.step(byCount: -1)
+
 //        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
 //        var newTime = playerCurrentTime - seekDuration
 //        if newTime < 0 {
@@ -401,22 +404,21 @@ extension CreateTweakViewController {
 //        player?.seek(to: time2)
     }
     func setSeekBarSetup() {
-        player?.pause()
-        player?.currentItem?.step(byCount: -1)
-       // let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        let interval = CMTime(seconds: 0.1,
+                   preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         // Queue on which to invoke the callback
-//        let mainQueue = DispatchQueue.main
-//        self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
-//            let currentSeconds = CMTimeGetSeconds(currentTime)
-//            guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
-//            let totalSeconds = CMTimeGetSeconds(duration)
-//            self?.lblVideoStartTime.text =  String(format: "%.3f", currentSeconds)
-//            // let remainingTime = totalSeconds - currentSeconds
-//            // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
-//            let progress: Float = Float(currentSeconds/totalSeconds)
-//            self?.playBackSlider.value = Float (progress)
-//        })
-    }
+        let mainQueue = DispatchQueue.main
+        self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
+          let currentSeconds = CMTimeGetSeconds(currentTime)
+          guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
+          let totalSeconds = CMTimeGetSeconds(duration)
+          self?.lblVideoStartTime.text = String(format: "%.3f", currentSeconds)
+          // let remainingTime = totalSeconds - currentSeconds
+          // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
+          let progress: Float = Float(currentSeconds/totalSeconds)
+          self?.playBackSlider.value = Float (progress)
+        })
+      }
     
 
     func seekSliderDragged(seekSlider: UISlider) {
