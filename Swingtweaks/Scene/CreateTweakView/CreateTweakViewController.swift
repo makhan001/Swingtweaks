@@ -78,15 +78,35 @@ class CreateTweakViewController: UIViewController {
     var isToolAdded:Bool = false
     var isAudioAdded:Bool = false
     fileprivate let seekDuration: Float64 = 0.03
-    
+    var value:Float64 = 0.0
     override func viewDidLoad() {
         super.viewDidLoad()
         SetUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
+        playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
+
     }
     @IBAction func playSliderValueChanged(_ sender: UISlider) {
-        self.seekSliderDragged(seekSlider: sender)
+       // self.seekSliderDragged(seekSlider: sender)
+    }
+    @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
+        if let touchEvent = event.allTouches?.first {
+            switch touchEvent.phase {
+            case .began:
+                print("began")
+                // handle drag began
+            case .moved:
+                print("moved \(slider.value)")
+                self.seekSliderDragged(seekSlider: slider)
+                // handle drag moved
+            case .ended:
+                print("ended")
+                // handle drag ended
+            default:
+                break
+            }
+        }
     }
     
     func showHideBottomTopView(isHidden: Bool) {
@@ -357,57 +377,65 @@ extension CreateTweakViewController {
     }
     func seekForword() {
         player?.pause()
-        guard let duration  = player?.currentItem?.duration else{
-            return
-        }
-        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
-        let newTime = playerCurrentTime + seekDuration
-        if newTime < CMTimeGetSeconds(duration) {
-            let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
-            player?.seek(to: time2)
-        }
+        player?.currentItem?.step(byCount: 1)
+//        guard let duration  = player?.currentItem?.duration else{
+//            return
+//        }
+//        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
+//        let newTime = playerCurrentTime + seekDuration
+//        if newTime < CMTimeGetSeconds(duration) {
+//            let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+//            player?.seek(to: time2)
+//        }
     }
     func seekbackWord() {
         player?.pause()
-        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
-        var newTime = playerCurrentTime - seekDuration
-        if newTime < 0 {
-            newTime = 0
-        }
-        let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
-        print("Backword \(time2)")
-        player?.seek(to: time2)
+        player?.currentItem?.step(byCount: -1)
+//        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
+//        var newTime = playerCurrentTime - seekDuration
+//        if newTime < 0 {
+//            newTime = 0
+//        }
+//        let time2: CMTime = CMTimeMake(value: Int64(newTime * 1000 as Float64), timescale: 1000)
+//        print("Backword \(time2)")
+//        player?.seek(to: time2)
     }
     func setSeekBarSetup() {
-        let interval = CMTime(seconds: 0.1,
-                              preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        player?.pause()
+        player?.currentItem?.step(byCount: -1)
+       // let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         // Queue on which to invoke the callback
-        let mainQueue = DispatchQueue.main
-        self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
-            let currentSeconds = CMTimeGetSeconds(currentTime)
-            guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
-            let totalSeconds = CMTimeGetSeconds(duration)
-            self?.lblVideoStartTime.text =  String(format: "%.3f", currentSeconds)
-            // let remainingTime = totalSeconds - currentSeconds
-            // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
-            let progress: Float = Float(currentSeconds/totalSeconds)
-            self?.playBackSlider.value = Float (progress)
-        })
+//        let mainQueue = DispatchQueue.main
+//        self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
+//            let currentSeconds = CMTimeGetSeconds(currentTime)
+//            guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
+//            let totalSeconds = CMTimeGetSeconds(duration)
+//            self?.lblVideoStartTime.text =  String(format: "%.3f", currentSeconds)
+//            // let remainingTime = totalSeconds - currentSeconds
+//            // self?.lblVideoEndTime.text = self?.stringFromTimeInterval(interval: remainingTime)
+//            let progress: Float = Float(currentSeconds/totalSeconds)
+//            self?.playBackSlider.value = Float (progress)
+//        })
     }
     
+
     func seekSliderDragged(seekSlider: UISlider) {
+        
+       
         if let duration = player?.currentItem?.duration {
-            let totalSeconds = CMTimeGetSeconds(duration)
-            let value = Float64(seekSlider.value) * totalSeconds
-            let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
-            player?.seek(to: seekTime, completionHandler: { (completedSeek) in
-                //perhaps do something later here
-                print("completedSeek",completedSeek)
-                self.player?.pause()
-                self.btnSeekPlay.isSelected = false
-            })
+          let totalSeconds = CMTimeGetSeconds(duration)
+          let value = Float64(seekSlider.value) * totalSeconds
+          self.lblVideoStartTime.text = String(format: "%.3f", value)
+          let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
+          player?.seek(to: seekTime, completionHandler: { (completedSeek) in
+            //perhaps do something later here
+            print("completedSeek",completedSeek)
+            self.player?.pause()
+            self.btnSeekPlay.isSelected = false
+          })
         }
-    }
+      }
+    
     
     @available(iOS 14.0, *)
     func stopRecordingCreateVideo() {

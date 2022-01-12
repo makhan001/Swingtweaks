@@ -117,23 +117,23 @@
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nxh-l3-9er">
-                                <rect key="frame" x="0.0" y="746" width="414" height="50"/>
+                                <rect key="frame" x="0.0" y="731" width="414" height="65"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L4C-IA-gt7">
-                                        <rect key="frame" x="10" y="10" width="394" height="30"/>
+                                        <rect key="frame" x="10" y="10" width="394" height="45"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iwb-LN-kcg">
-                                                <rect key="frame" x="364" y="5" width="20" height="20"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iwb-LN-kcg">
+                                                <rect key="frame" x="344" y="0.0" width="45" height="45"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="20" id="L2r-BM-WmH"/>
-                                                    <constraint firstAttribute="height" constant="20" id="Ufy-70-bhf"/>
+                                                    <constraint firstAttribute="width" constant="45" id="L2r-BM-WmH"/>
+                                                    <constraint firstAttribute="height" constant="45" id="Ufy-70-bhf"/>
                                                 </constraints>
                                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <state key="normal" backgroundImage="playerplay"/>
-                                                <state key="selected" backgroundImage="playerpause"/>
+                                                <state key="normal" image="playerplay"/>
+                                                <state key="selected" image="playerpause"/>
                                             </button>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="YjR-wc-btI">
-                                                <rect key="frame" x="68" y="0.0" width="293" height="31"/>
+                                                <rect key="frame" x="98" y="0.0" width="243" height="46"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" systemColor="systemRedColor"/>
                                                 <color key="minimumTrackTintColor" systemColor="systemRedColor"/>
@@ -144,21 +144,25 @@
                                                 </connections>
                                             </slider>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="zs1-6G-844">
-                                                <rect key="frame" x="5" y="0.0" width="60" height="30"/>
+                                                <rect key="frame" x="5" y="0.0" width="90" height="45"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czS-yk-ETW">
-                                                        <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="45" height="45"/>
                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <state key="normal" image="privious"/>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lgs-Ny-ua1">
-                                                        <rect key="frame" x="30" y="0.0" width="30" height="30"/>
+                                                        <rect key="frame" x="45" y="0.0" width="45" height="45"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="45" id="317-7T-J6X"/>
+                                                            <constraint firstAttribute="width" constant="45" id="MUE-1y-fRK"/>
+                                                        </constraints>
                                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <state key="normal" image="next"/>
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="60" id="3TB-tt-7XK"/>
+                                                    <constraint firstAttribute="width" constant="90" id="3TB-tt-7XK"/>
                                                 </constraints>
                                             </stackView>
                                         </subviews>
@@ -173,7 +177,7 @@
                                             <constraint firstItem="YjR-wc-btI" firstAttribute="leading" secondItem="zs1-6G-844" secondAttribute="trailing" constant="5" id="VlK-b4-mLU"/>
                                             <constraint firstItem="YjR-wc-btI" firstAttribute="top" secondItem="L4C-IA-gt7" secondAttribute="top" id="efp-bb-Fep"/>
                                             <constraint firstItem="Iwb-LN-kcg" firstAttribute="centerY" secondItem="L4C-IA-gt7" secondAttribute="centerY" id="ibA-tN-2vR"/>
-                                            <constraint firstAttribute="trailing" secondItem="Iwb-LN-kcg" secondAttribute="trailing" constant="10" id="yqM-gD-oZz"/>
+                                            <constraint firstAttribute="trailing" secondItem="Iwb-LN-kcg" secondAttribute="trailing" constant="5" id="yqM-gD-oZz"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -184,7 +188,6 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="2n1-Be-XkF"/>
                                     <constraint firstItem="L4C-IA-gt7" firstAttribute="leading" secondItem="Nxh-l3-9er" secondAttribute="leading" constant="10" id="9Ib-FK-Wpy"/>
                                     <constraint firstAttribute="bottom" secondItem="L4C-IA-gt7" secondAttribute="bottom" constant="10" id="K0c-D9-AYE"/>
                                     <constraint firstItem="L4C-IA-gt7" firstAttribute="top" secondItem="Nxh-l3-9er" secondAttribute="top" constant="10" id="WFZ-cT-8sh"/>
@@ -192,7 +195,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JhW-Op-UJn">
-                                <rect key="frame" x="0.0" y="124" width="414" height="622"/>
+                                <rect key="frame" x="0.0" y="124" width="414" height="607"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5HK-OB-CYN">
