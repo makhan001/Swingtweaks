@@ -84,6 +84,9 @@ class CreateTweakViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        playBackSlider.minimumValue = 0.0
+        playBackSlider.maximumValue = 1.0
+        playBackSlider.isContinuous = true
         self.lastValue = playBackSlider.value
         SetUp()
         btnSave.isUserInteractionEnabled = false
@@ -423,7 +426,7 @@ extension CreateTweakViewController {
         }
         seekSlider.setValue(lastValue, animated: false)
         self.lastValue = seekSlider.value
-        
+        print("lastValue ---> \(lastValue)")
         
 //        DispatchQueue.main.async {
 //            //            if self.currentTime >= self.lasttime {
