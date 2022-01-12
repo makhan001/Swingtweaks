@@ -43,6 +43,8 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnSeekPlay:UIButton!
     @IBOutlet weak var viewSeekBar: UIView!
     
+    var lastValue:Float = 0.0
+    
     var lasttime:Double = 0.0
     var currentTime:Double = 0.0
     var videoUrl: URL?
@@ -82,6 +84,7 @@ class CreateTweakViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.lastValue = playBackSlider.value
         SetUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
@@ -91,6 +94,7 @@ class CreateTweakViewController: UIViewController {
     @IBAction func playSliderValueChanged(_ sender: UISlider) {
         // self.seekSliderDragged(seekSlider: sender)
     }
+    
     @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
         if let touchEvent = event.allTouches?.first {
             switch touchEvent.phase {
@@ -100,7 +104,6 @@ class CreateTweakViewController: UIViewController {
                 
             case .moved:
                 print("moved with value \(slider.value)")
-                
                 DispatchQueue.main.async {
                     self.dragSlider(seekSlider: slider)
                 }
@@ -409,19 +412,33 @@ extension CreateTweakViewController {
             })
         }
     }
+    
     func dragSlider(seekSlider: UISlider) {
-        DispatchQueue.main.async {
-            if self.currentTime >= self.lasttime {
-                self.player?.currentItem?.step(byCount: 1)
-            }
-            else{
-                self.player?.currentItem?.step(byCount: -1)
-            }
-            self.lasttime = self.currentTime
-            self.currentTime = Double(seekSlider.value)
-            self.player?.pause()
-            self.btnSeekPlay.isSelected = false
+        
+        self.player?.pause()
+        if seekSlider.value > lastValue { // forward
+            self.player?.currentItem?.step(byCount: 1)
+        } else { // backward
+            self.player?.currentItem?.step(byCount: -1)
         }
+        seekSlider.setValue(lastValue, animated: false)
+        self.lastValue = seekSlider.value
+        
+        
+//        DispatchQueue.main.async {
+//            //            if self.currentTime >= self.lasttime {
+//            //                self.player?.currentItem?.step(byCount: 1)
+//            //            }
+//            //            else{
+//            //                self.player?.currentItem?.step(byCount: -1)
+//            //            }
+//
+//            self.player?.currentItem?.step(byCount: 1)
+//            //            self.lasttime = self.currentTime
+//            //            self.currentTime = Double(seekSlider.value)
+//
+//            self.btnSeekPlay.isSelected = false
+//        }
     }
     
     @available(iOS 14.0, *)
