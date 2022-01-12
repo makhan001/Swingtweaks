@@ -347,6 +347,7 @@ extension CreateTweakViewController {
     }
     private func eraserAction() {
         self.toolsSetup(toolIndex: 3)
+        drawingView.toolSettings.selectedShape = nil
         drawingView.userSettings.strokeWidth = strokeWidths[2]
     }
     private func drawLineAction() {
@@ -377,7 +378,7 @@ extension CreateTweakViewController {
     }
     func seekForword() {
         player?.pause()
-        btnPlay.isSelected = false
+        btnSeekPlay.isSelected = false
         player?.currentItem?.step(byCount: 1)
 //        guard let duration  = player?.currentItem?.duration else{
 //            return
@@ -391,7 +392,7 @@ extension CreateTweakViewController {
     }
     func seekbackWord() {
         player?.pause()
-        btnPlay.isSelected = false
+        btnSeekPlay.isSelected = false
         player?.currentItem?.step(byCount: -1)
 
 //        let playerCurrentTime = CMTimeGetSeconds((player?.currentTime())!)
@@ -490,6 +491,8 @@ extension CreateTweakViewController {
 extension CreateTweakViewController: SelectionToolDelegate {
     func selectionToolDidTapOnAlreadySelectedShape(_ shape: ShapeSelectable) {
         if shape as? TextShape != nil {
+        
+
         } else {
             drawingView.toolSettings.selectedShape = nil
         }
