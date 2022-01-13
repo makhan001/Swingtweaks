@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4FE4A0F7-1FCD-418B-88FC-54A2FFFA9CAB"
+            uuid = "692ED9AC-9E0F-4D7F-A1A5-1AF0BC10B982"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Swingtweaks/Scene/CreateTweakView/CreateTweakViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
+            landmarkName = "jumpSliderTapped(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

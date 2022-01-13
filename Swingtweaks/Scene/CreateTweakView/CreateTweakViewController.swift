@@ -88,19 +88,20 @@ class CreateTweakViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        playBackSlider.minimumValue = 0.0
-        playBackSlider.maximumValue = 1.0
+        SetUp()
+        //playBackSlider.minimumValue = 0.0
+        //playBackSlider.maximumValue = 1.0
         playBackSlider.isContinuous = true
         self.lastValue = playBackSlider.value
         getTotalFramesCount(videoUrl: videoUrl!)
-        SetUp()
+        
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
-       // playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
+        playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
         
     }
     @IBAction func playSliderValueChanged(_ sender: UISlider) {
-         self.seekSliderDragged(seekSlider: sender)
+//         self.seekSliderDragged(seekSlider: sender)
     }
     
     @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
@@ -137,11 +138,11 @@ class CreateTweakViewController: UIViewController {
 
 extension CreateTweakViewController{
     private func SetUp() {
-//        guard let path = Bundle.main.path(forResource: "videoApp", ofType:"mov") else {
-//                   debugPrint("video.m4v not found")
-//                   return
-//               }
-//        videoUrl = URL(fileURLWithPath: path)
+        guard let path = Bundle.main.path(forResource: "videoApp", ofType:"mov") else {
+                   debugPrint("video.m4v not found")
+                   return
+               }
+        videoUrl = URL(fileURLWithPath: path)
         
         [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay, btnNextPlay, btnPreviousPlay].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
@@ -159,7 +160,7 @@ extension CreateTweakViewController{
         setVideo(url: newurl)
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
-        setSeekBarSetup()
+//        setSeekBarSetup()
         playBackSlider.setThumbImage(UIImage(named: "sliderDisselect"), for: .normal)
         playBackSlider.setThumbImage(UIImage(named: "sliderSelect"), for: .highlighted)
 //        self.seekSliderSetup()
@@ -431,11 +432,15 @@ extension CreateTweakViewController {
     
     
     func seekSliderDragged(seekSlider: UISlider) {
+        
+        
+        
         if let duration = player?.currentItem?.duration {
             let totalSeconds = CMTimeGetSeconds(duration)
             let value = Float64(seekSlider.value) * totalSeconds
             self.lblVideoStartTime.text = String(format: "%.3f", value)
-            let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
+            self.stepByFrame(in: .forward)
+//            let seekTime = CMTime(value: CMTimeValue(Float64(value)), timescale: 1)
 //            player?.seek(to: seekTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero, completionHandler: { (completedSeek) in
 //                self.player?.pause()
 //                self.btnSeekPlay.isSelected = false
@@ -446,7 +451,6 @@ extension CreateTweakViewController {
 //                self.btnSeekPlay.isSelected = false
 //            })
             
-            self.stepByFrame(in: .forward)
         }
     }
     
@@ -454,13 +458,16 @@ extension CreateTweakViewController {
         
         self.player?.pause()
         if seekSlider.value > lastValue { // forward
-            self.player?.currentItem?.step(byCount: 1)
+            self.stepByFrame(in: .forward)
+//            self.player?.currentItem?.step(byCount: 1)
         } else { // backward
-            self.player?.currentItem?.step(byCount: -1)
+            self.stepByFrame(in: .backward)
+//            self.player?.currentItem?.step(byCount: -1)
         }
-        seekSlider.setValue(lastValue, animated: false)
+//        seekSlider.setValue(seekSlider.value, animated: false)
         self.lastValue = seekSlider.value
         print("lastValue ---> \(lastValue)")
+        
         
 //        DispatchQueue.main.async {
 //            //            if self.currentTime >= self.lasttime {
@@ -543,7 +550,13 @@ extension CreateTweakViewController {
 
         player?.seek(to: seekTimeInProgress, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { [weak self] _ in
             guard let self = self else { return }
-
+            let value = Double(seekTimeInProgress.value)
+            print("value ---> \(value.roundToDecimal(3))")
+            
+            let timescale = Double(seekTimeInProgress.timescale)
+            print("timescale ---> \(timescale.roundToDecimal(3))")
+            print("result ---> \(Float(value / timescale))")
+//            self.playBackSlider.setValue(Float(value / timescale), animated: false)
             if CMTimeCompare(seekTimeInProgress, self.chaseTime) == 0 {
                 self.isSeekInProgress = false
             } else {
@@ -686,5 +699,13 @@ extension CreateTweakViewController {
         drawingView.userSettings.strokeColor = Constants.colors[index]
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
+    }
+}
+
+
+extension Double {
+    func roundToDecimal(_ fractionDigits: Int) -> Double {
+        let multiplier = pow(10, Double(fractionDigits))
+        return Darwin.round(self * multiplier) / multiplier
     }
 }
