@@ -81,6 +81,10 @@ class CreateTweakViewController: UIViewController {
     var isToolAdded:Bool = false
     var value:Float64 = 0.0
     
+    private var isSeekInProgress = false
+    private var chaseTime = CMTime.zero
+    private var preferredFrameRate: Float = 0.0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,6 +92,7 @@ class CreateTweakViewController: UIViewController {
         playBackSlider.maximumValue = 1.0
         playBackSlider.isContinuous = true
         self.lastValue = playBackSlider.value
+        getTotalFramesCount(videoUrl: videoUrl!)
         setUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
@@ -137,7 +142,22 @@ extension CreateTweakViewController{
         self.btnBackword.addGestureRecognizer(backwordlongPress)
         btnUndo.addTarget(drawingView.operationStack, action: #selector(DrawingOperationStack.undo), for: .touchUpInside)
     }
-    
+    func getTotalFramesCount(videoUrl: URL) {
+        let asset = AVURLAsset(url: videoUrl, options: nil)
+        let tracks = asset.tracks(withMediaType: .video)
+        if let framePerSeconds = tracks.first?.nominalFrameRate {
+            print("FramePerSeconds", framePerSeconds)
+            self.preferredFrameRate = framePerSeconds
+            if let duration = self.player?.currentItem?.asset.duration {
+                let totalSeconds = CMTimeGetSeconds(duration)
+               // self.totalVideoDuration = Float(totalSeconds)
+                print("TotalDurationSeconds :: \(totalSeconds)")
+               // self.totalFramesPerSeconds = Float(totalSeconds) * framePerSeconds
+                let totalFrames = Float(totalSeconds) * framePerSeconds
+                print("Total frames", totalFrames)
+            }
+        }
+    }
     @objc func restartVideo() {
         player?.currentItem?.seek(to: CMTime.zero, completionHandler: { _ in
             self.player?.play()
@@ -452,31 +472,33 @@ extension CreateTweakViewController {
     }
     
     func dragSlider(seekSlider: UISlider) {
-        
         self.player?.pause()
         if seekSlider.value > lastValue { // forward
-            self.player?.currentItem?.step(byCount: 1)
+            self.stepByFrame(in: .forward)
+//            self.player?.currentItem?.step(byCount: 1)
         } else { // backward
-            self.player?.currentItem?.step(byCount: -1)
+            self.stepByFrame(in: .backward)
+//            self.player?.currentItem?.step(byCount: -1)
         }
-        seekSlider.setValue(lastValue, animated: false)
+//        seekSlider.setValue(seekSlider.value, animated: false)
         self.lastValue = seekSlider.value
         print("lastValue ---> \(lastValue)")
         
-        //        DispatchQueue.main.async {
-        //            //            if self.currentTime >= self.lasttime {
-        //            //                self.player?.currentItem?.step(byCount: 1)
-        //            //            }
-        //            //            else{
-        //            //                self.player?.currentItem?.step(byCount: -1)
-        //            //            }
-        //
-        //            self.player?.currentItem?.step(byCount: 1)
-        //            //            self.lasttime = self.currentTime
-        //            //            self.currentTime = Double(seekSlider.value)
-        //
-        //            self.btnSeekPlay.isSelected = false
-        //        }
+        
+//        DispatchQueue.main.async {
+//            //            if self.currentTime >= self.lasttime {
+//            //                self.player?.currentItem?.step(byCount: 1)
+//            //            }
+//            //            else{
+//            //                self.player?.currentItem?.step(byCount: -1)
+//            //            }
+//
+//            self.player?.currentItem?.step(byCount: 1)
+//            //            self.lasttime = self.currentTime
+//            //            self.currentTime = Double(seekSlider.value)
+//
+//            self.btnSeekPlay.isSelected = false
+//        }
     }
     
     @available(iOS 14.0, *)
@@ -513,6 +535,72 @@ extension CreateTweakViewController {
     
 }
 extension CreateTweakViewController {
+    public enum Direction {
+        case forward
+        case backward
+    }
+
+    public func seekWithFrame(to time: CMTime) {
+        seekSmoothlyToTime(newChaseTime: time)
+    }
+    func stepByFrame(in direction: Direction) {
+        let frameRate = preferredFrameRate //preferredFrameRate
+            ?? player?.currentItem?.tracks
+            .first(where: { $0.assetTrack?.mediaType == .video })?
+                .currentVideoFrameRate
+            ?? -1
+
+        let time = player?.currentItem?.currentTime() ?? CMTime.zero
+        let seconds = Double(1) / Double(frameRate)
+        let timescale = Double(seconds) / Double(time.timescale) < 1 ? 600 : time.timescale
+        let oneFrame = CMTime(seconds: seconds, preferredTimescale: timescale)
+        let next = direction == .forward
+            ? CMTimeAdd(time, oneFrame)
+            : CMTimeSubtract(time, oneFrame)
+
+        seekSmoothlyToTime(newChaseTime: next)
+    }
+    func actuallySeekToTime() {
+        isSeekInProgress = true
+        let seekTimeInProgress = chaseTime
+
+        player?.seek(to: seekTimeInProgress, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { [weak self] _ in
+            guard let self = self else { return }
+            let value = Double(seekTimeInProgress.value)
+            print("value ---> \(value.roundToDecimal(3))")
+            
+            let timescale = Double(seekTimeInProgress.timescale)
+            print("timescale ---> \(timescale.roundToDecimal(3))")
+            print("result ---> \(Float(value / timescale))")
+//            self.playBackSlider.setValue(Float(value / timescale), animated: false)
+            if CMTimeCompare(seekTimeInProgress, self.chaseTime) == 0 {
+                self.isSeekInProgress = false
+            } else {
+                self.trySeekToChaseTime()
+            }
+        }
+    }
+    private func trySeekToChaseTime() {
+        guard player?.status == .readyToPlay else { return }
+        actuallySeekToTime()
+    }
+    func seekSmoothlyToTime(newChaseTime: CMTime) {
+        if CMTimeCompare(newChaseTime, chaseTime) != 0 {
+            chaseTime = newChaseTime
+
+            if !isSeekInProgress {
+                trySeekToChaseTime()
+            }
+        }
+    }
+}
+extension Double {
+    func roundToDecimal(_ fractionDigits: Int) -> Double {
+        let multiplier = pow(10, Double(fractionDigits))
+        return Darwin.round(self * multiplier) / multiplier
+    }
+}
+extension CreateTweakViewController {
     func toolsSetup(toolIndex: Int) {
         view.addSubview(drawingView)
         Drawing.debugSerialization = true
@@ -522,7 +610,7 @@ extension CreateTweakViewController {
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
         drawingView.translatesAutoresizingMaskIntoConstraints = false
-        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(120).bottom(-155) }
+        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(120).bottom(-165) }
     }
 }
 
