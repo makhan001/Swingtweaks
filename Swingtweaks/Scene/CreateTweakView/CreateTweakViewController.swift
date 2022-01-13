@@ -27,7 +27,6 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var btnSpeedNormal:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
-    @IBOutlet weak var btnBackward:UIButton!
     @IBOutlet weak var btnSwingTweak:UIButton!
     //Hide UI
     @IBOutlet weak var recordingBottomView:UIView!
@@ -38,13 +37,12 @@ class CreateTweakViewController: UIViewController {
     //Play Seek UI
     @IBOutlet weak var playBackSlider: UISlider!
     @IBOutlet weak var lblVideoStartTime: UILabel!
-    @IBOutlet weak var btnPreviousPlay:UIButton!
-    @IBOutlet weak var btnNextPlay:UIButton!
+    @IBOutlet weak var btnBackword:UIButton!
+    @IBOutlet weak var btnForword:UIButton!
     @IBOutlet weak var btnSeekPlay:UIButton!
     @IBOutlet weak var viewSeekBar: UIView!
-    
+    @IBOutlet weak var btnUndo:UIButton!
     var lastValue:Float = 0.0
-    
     var lasttime:Double = 0.0
     var currentTime:Double = 0.0
     var videoUrl: URL?
@@ -59,11 +57,13 @@ class CreateTweakViewController: UIViewController {
     var isPlaying: Bool {
         return player?.rate != 0 && player?.error == nil
     }
+    var timer = Timer()
     //  Tools Editors
     var assetsGenerator:AVAssetImageGenerator!
     //Tools Setup
     lazy var drawingView: DrawsanaView = {
         let drawingView = DrawsanaView()
+        drawingView.operationStack.delegate = self
         return drawingView
     }()
     let strokeWidths: [CGFloat] = [5,10,20]
@@ -88,37 +88,12 @@ class CreateTweakViewController: UIViewController {
         playBackSlider.maximumValue = 1.0
         playBackSlider.isContinuous = true
         self.lastValue = playBackSlider.value
-        SetUp()
+        setUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
-        playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
-        
-    }
-    @IBAction func playSliderValueChanged(_ sender: UISlider) {
-        // self.seekSliderDragged(seekSlider: sender)
     }
     
-    @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
-        if let touchEvent = event.allTouches?.first {
-            switch touchEvent.phase {
-            case .began:
-                print("")
-                print("begin with value \(slider.value)")
-                
-            case .moved:
-                print("moved with value \(slider.value)")
-                DispatchQueue.main.async {
-                    self.dragSlider(seekSlider: slider)
-                }
-            case .ended:
-                player?.pause()
-                btnSeekPlay.isSelected = false
-                // handle drag ended
-            default:
-                break
-            }
-        }
-    }
+    
     
     func showHideBottomTopView(isHidden: Bool) {
         CollectionView.isHidden = isHidden
@@ -126,13 +101,12 @@ class CreateTweakViewController: UIViewController {
         self.saveDeleteBottomView.isHidden = isHidden
         self.SwingTweakBottomView.isHidden = !isHidden
         self.btnRecord.isHidden = true
-        self.btnBackward.isHidden = true
     }
 }
 
 extension CreateTweakViewController{
-    private func SetUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay, btnNextPlay, btnPreviousPlay].forEach {
+    private func setUp() {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay, btnForword, btnBackword].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -152,6 +126,16 @@ extension CreateTweakViewController{
         playBackSlider.setThumbImage(UIImage(named: "sliderDisselect"), for: .normal)
         playBackSlider.setThumbImage(UIImage(named: "sliderSelect"), for: .highlighted)
         self.seekSliderSetup()
+        
+        playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
+        let forwordlongPress = UILongPressGestureRecognizer(target: self, action: #selector(forwordLongPress(gesture:)))
+        forwordlongPress.minimumPressDuration = 0.5
+        self.btnForword.addGestureRecognizer(forwordlongPress)
+        
+        let backwordlongPress = UILongPressGestureRecognizer(target: self, action: #selector(backwordLongPress(gesture:)))
+        backwordlongPress.minimumPressDuration = 0.5
+        self.btnBackword.addGestureRecognizer(backwordlongPress)
+        btnUndo.addTarget(drawingView.operationStack, action: #selector(DrawingOperationStack.undo), for: .touchUpInside)
     }
     
     @objc func restartVideo() {
@@ -167,7 +151,6 @@ extension CreateTweakViewController{
         self.playBackSlider?.addGestureRecognizer(stackTap)
     }
     @objc func jumpSliderTapped(_ sender: UITapGestureRecognizer) {
-        print("Jump Slider")
         let pointTapped: CGPoint = sender.location(in: self.view)
         let positionOfSlider: CGPoint = playBackSlider.frame.origin
         let widthOfSlider: CGFloat = playBackSlider.frame.size.width
@@ -208,6 +191,52 @@ extension CreateTweakViewController{
         playerController?.view.frame = CGRect(x: 0, y: 0, width: self.videoView.bounds.width, height: self.videoView.bounds.height)
         player?.currentItem?.audioTimePitchAlgorithm = .timeDomain
     }
+    @objc func forwordLongPress(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == UIGestureRecognizer.State.began {
+            print("Long Press Start")
+            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(forwardLongPressed), userInfo: nil, repeats: true)
+        }else if gesture.state == UIGestureRecognizer.State.ended {
+            print("Long Press Ended")
+            timer.invalidate()
+        }
+    }
+    @objc func forwardLongPressed(){
+        player?.pause()
+        btnSeekPlay.isSelected = false
+        player?.currentItem?.step(byCount: 1)
+    }
+    @objc func backwordLongPress(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == UIGestureRecognizer.State.began {
+            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(backwordLongPressed), userInfo: nil, repeats: true)
+        }else if gesture.state == UIGestureRecognizer.State.ended {
+            timer.invalidate()
+        }
+    }
+    @objc func backwordLongPressed(){
+        player?.pause()
+        btnSeekPlay.isSelected = false
+        player?.currentItem?.step(byCount: -1)
+    }
+    
+    @objc func onSliderValChanged(slider: UISlider, event: UIEvent) {
+        if let touchEvent = event.allTouches?.first {
+            switch touchEvent.phase {
+            case .began:
+                print("")
+                print("begin with value \(slider.value)")
+            case .moved:
+                print("moved with value \(slider.value)")
+                DispatchQueue.main.async {
+                    self.dragSlider(seekSlider: slider)
+                }
+            case .ended:
+                player?.pause()
+                btnSeekPlay.isSelected = false
+            default:
+                break
+            }
+        }
+    }
 }
 
 // MARK:- Button Action
@@ -240,11 +269,11 @@ extension CreateTweakViewController {
             self.swingTweakButtonAction()
         case btnSeekPlay:
             seekPlayAction()
-        case btnNextPlay:
+        case btnForword:
             DispatchQueue.main.async {
                 self.seekForword()
             }
-        case btnPreviousPlay:
+        case btnBackword:
             DispatchQueue.main.async {
                 self.seekbackWord()
             }
@@ -263,6 +292,7 @@ extension CreateTweakViewController {
         self.player?.seek(to: CMTime.zero)
         player?.pause()
         btnPlay.isSelected = false
+        btnUndo.isHidden = false
         btnSeekPlay.isSelected = false
         updateRecoredBtn()
     }
@@ -347,9 +377,13 @@ extension CreateTweakViewController {
         self.CollectionView.didSelectColorAtIndex = didSelectColorAtIndex
     }
     private func eraserAction() {
-        self.toolsSetup(toolIndex: 3)
-        drawingView.toolSettings.selectedShape = nil
-        drawingView.userSettings.strokeWidth = strokeWidths[2]
+        print("drawingView.drawing.shapescount\(drawingView.drawing.shapes.count)")
+        //self.drawingView.drawing.shapes.removeLast()
+        //DrawingOperationStack.undo
+      //  self.drawingView.drawing.shapes.remove(at: 1)
+        //        self.toolsSetup(toolIndex: 3)
+//        drawingView.toolSettings.selectedShape = nil
+//        drawingView.userSettings.strokeWidth = strokeWidths[2]
     }
     private func drawLineAction() {
         self.toolsSetup(toolIndex: 4)
@@ -394,6 +428,7 @@ extension CreateTweakViewController {
         self.playerController?.player?.addPeriodicTimeObserver(forInterval: interval, queue: mainQueue, using: { [weak self] (currentTime) in
             let currentSeconds = CMTimeGetSeconds(currentTime)
             guard let duration = self?.playerController?.player?.currentItem?.duration else { return }
+            
             let totalSeconds = CMTimeGetSeconds(duration)
             self?.lblVideoStartTime.text = String(format: "%.3f", currentSeconds)
             let progress: Float = Float(currentSeconds/totalSeconds)
@@ -428,20 +463,20 @@ extension CreateTweakViewController {
         self.lastValue = seekSlider.value
         print("lastValue ---> \(lastValue)")
         
-//        DispatchQueue.main.async {
-//            //            if self.currentTime >= self.lasttime {
-//            //                self.player?.currentItem?.step(byCount: 1)
-//            //            }
-//            //            else{
-//            //                self.player?.currentItem?.step(byCount: -1)
-//            //            }
-//
-//            self.player?.currentItem?.step(byCount: 1)
-//            //            self.lasttime = self.currentTime
-//            //            self.currentTime = Double(seekSlider.value)
-//
-//            self.btnSeekPlay.isSelected = false
-//        }
+        //        DispatchQueue.main.async {
+        //            //            if self.currentTime >= self.lasttime {
+        //            //                self.player?.currentItem?.step(byCount: 1)
+        //            //            }
+        //            //            else{
+        //            //                self.player?.currentItem?.step(byCount: -1)
+        //            //            }
+        //
+        //            self.player?.currentItem?.step(byCount: 1)
+        //            //            self.lasttime = self.currentTime
+        //            //            self.currentTime = Double(seekSlider.value)
+        //
+        //            self.btnSeekPlay.isSelected = false
+        //        }
     }
     
     @available(iOS 14.0, *)
@@ -487,7 +522,7 @@ extension CreateTweakViewController {
         drawingView.userSettings.strokeWidth = strokeWidths[strokeWidthIndex]
         drawingView.userSettings.fontName = "Marker Felt"
         drawingView.translatesAutoresizingMaskIntoConstraints = false
-        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(100).bottom(-140) }
+        drawingView.applyConstraints { $0.width(self.videoView.frame.width).leading(self.videoView.frame.minX).height(self.videoView.frame.height).trailing(self.videoView.frame.minY).top(120).bottom(-155) }
     }
 }
 
@@ -542,8 +577,6 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
         }
     }
     
-    
-    
     func stopRecording() {
         screenRecorder.stopRecording { [unowned self] (preview, error) in
             guard preview != nil else {
@@ -559,12 +592,9 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
         dismiss(animated: true)
     }
 }
-
-
-
-
 // MARK: Closure Callback
 extension CreateTweakViewController {
+    
     func didSelectToolsAtIndex(_ index: Int) {
         switch index {
         case 0:
@@ -586,10 +616,17 @@ extension CreateTweakViewController {
         case 6:
             self.colorAction()
         case 7:
-            self.eraserAction()
+            print("eraser")
+           // self.eraserAction()
+            
         default:
             print("pencil")
         }
+    }
+    /// Update button states to reflect undo stack
+    private func applyUndoViewState() {
+        btnUndo.isEnabled = drawingView.operationStack.canUndo
+        btnUndo.alpha = btnUndo.isEnabled ? 1 : 0.5
     }
 }
 // MARK: Color Closure Callback
@@ -599,4 +636,18 @@ extension CreateTweakViewController {
         CollectionView.configure(strokeColor: false)
         self.CollectionView.didSelectToolsAtIndex = didSelectToolsAtIndex
     }
+}
+
+extension CreateTweakViewController: DrawingOperationStackDelegate {
+  func drawingOperationStackDidUndo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+    applyUndoViewState()
+  }
+
+  func drawingOperationStackDidRedo(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+    applyUndoViewState()
+  }
+
+  func drawingOperationStackDidApply(_ operationStack: DrawingOperationStack, operation: DrawingOperation) {
+    applyUndoViewState()
+  }
 }

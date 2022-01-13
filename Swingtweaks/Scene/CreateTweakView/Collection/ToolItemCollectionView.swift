@@ -20,8 +20,9 @@ class ToolItemCollectionView: UICollectionView {
                       ToolsItems( toolName: "ST_Square", isSelected: false),
                       ToolsItems( toolName: "ST_Hand", isSelected: false),
                       ToolsItems( toolName: "ST_Search", isSelected: false),
-                      ToolsItems( toolName: "ST_Paintpalette", isSelected: false),
-                      ToolsItems( toolName: "ST_Eraser", isSelected: false)]
+                      ToolsItems( toolName: "ST_Paintpalette", isSelected: false)]
+    
+                   //   ToolsItems( toolName: "ST_Eraser", isSelected: false)]
     var isStrokeColor:Bool = false
     var didSelectToolsAtIndex:((Int) -> Void)?
     var didSelectColorAtIndex:((Int) -> Void)?

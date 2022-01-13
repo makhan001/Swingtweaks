@@ -29,7 +29,7 @@ public class Drawing: Codable {
   public static var debugSerialization = false
 
   public var size: CGSize
-  public private(set) var shapes: [Shape] = []
+  public var shapes: [Shape] = []
 
   /**
    You must set this property if you use any shapes other than the built-in ones

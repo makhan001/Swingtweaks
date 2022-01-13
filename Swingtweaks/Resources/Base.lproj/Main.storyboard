@@ -88,11 +88,11 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <collectionView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zJ8-Ed-Zt9" customClass="ToolItemCollectionView" customModule="Swingtweaks" customModuleProvider="target">
-                                        <rect key="frame" x="134" y="20" width="270" height="40"/>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="zJ8-Ed-Zt9" customClass="ToolItemCollectionView" customModule="Swingtweaks" customModuleProvider="target">
+                                        <rect key="frame" x="134" y="20" width="240" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="270" id="FD5-pI-Xjh"/>
+                                            <constraint firstAttribute="width" constant="240" id="FD5-pI-Xjh"/>
                                             <constraint firstAttribute="height" constant="40" id="Pjq-eM-qCP"/>
                                         </constraints>
                                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="pb4-gw-al6">
@@ -103,17 +103,31 @@
                                         </collectionViewFlowLayout>
                                         <cells/>
                                     </collectionView>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QLZ-s3-nqI">
+                                        <rect key="frame" x="379" y="27.5" width="25" height="25"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="25" id="Jw0-jC-xFH"/>
+                                            <constraint firstAttribute="height" constant="25" id="yhK-2Y-wly"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" backgroundImage="ST_Undo">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="cmN-HT-iw8" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="8ah-87-E7G"/>
+                                    <constraint firstAttribute="trailing" secondItem="QLZ-s3-nqI" secondAttribute="trailing" constant="10" id="X0R-q6-Xlv"/>
                                     <constraint firstItem="uWt-Jl-6Rj" firstAttribute="leading" secondItem="tZj-S0-4cf" secondAttribute="leading" id="ZKn-9S-7IY"/>
                                     <constraint firstItem="zJ8-Ed-Zt9" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="aPe-XT-sTM"/>
-                                    <constraint firstAttribute="trailing" secondItem="zJ8-Ed-Zt9" secondAttribute="trailing" constant="10" id="aiN-6e-ROY"/>
                                     <constraint firstAttribute="height" constant="80" id="exK-6b-Uks"/>
                                     <constraint firstItem="uWt-Jl-6Rj" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="gxh-1d-dT3"/>
                                     <constraint firstItem="zJ8-Ed-Zt9" firstAttribute="leading" secondItem="cmN-HT-iw8" secondAttribute="trailing" constant="5" id="mui-yP-Vli"/>
                                     <constraint firstItem="cmN-HT-iw8" firstAttribute="leading" secondItem="uWt-Jl-6Rj" secondAttribute="trailing" constant="5" id="oyo-ii-qT2"/>
+                                    <constraint firstItem="QLZ-s3-nqI" firstAttribute="centerY" secondItem="tZj-S0-4cf" secondAttribute="centerY" id="sQX-Q0-fLi"/>
+                                    <constraint firstItem="QLZ-s3-nqI" firstAttribute="leading" secondItem="zJ8-Ed-Zt9" secondAttribute="trailing" constant="5" id="uhb-Te-WPr"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nxh-l3-9er">
@@ -139,9 +153,6 @@
                                                 <color key="minimumTrackTintColor" systemColor="systemRedColor"/>
                                                 <color key="maximumTrackTintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="thumbTintColor" systemColor="systemRedColor"/>
-                                                <connections>
-                                                    <action selector="playSliderValueChanged:" destination="AIc-Iz-Ino" eventType="valueChanged" id="axZ-Cv-38N"/>
-                                                </connections>
                                             </slider>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="zs1-6G-844">
                                                 <rect key="frame" x="5" y="0.0" width="90" height="45"/>
@@ -454,10 +465,9 @@
                         <outlet property="SwingTweakBottomView" destination="cB4-fs-yl0" id="pHm-iT-Hqn"/>
                         <outlet property="ViewSpeed" destination="dSD-hn-mC7" id="kB8-R3-0LC"/>
                         <outlet property="btnBack" destination="uWt-Jl-6Rj" id="bTf-Yj-1n2"/>
-                        <outlet property="btnBackward" destination="0TW-vX-Zjj" id="IhI-fG-XnW"/>
-                        <outlet property="btnNextPlay" destination="Lgs-Ny-ua1" id="QkR-5p-2Qm"/>
+                        <outlet property="btnBackword" destination="czS-yk-ETW" id="XBX-oc-pW0"/>
+                        <outlet property="btnForword" destination="Lgs-Ny-ua1" id="ljy-bn-KVH"/>
                         <outlet property="btnPlay" destination="ktr-4Q-6rz" id="pjw-da-eax"/>
-                        <outlet property="btnPreviousPlay" destination="czS-yk-ETW" id="wE4-KS-Mj4"/>
                         <outlet property="btnRecord" destination="aql-sK-C9y" id="wYN-cf-dk1"/>
                         <outlet property="btnSave" destination="5vl-et-pTY" id="4lR-Xa-XbW"/>
                         <outlet property="btnSeekPlay" destination="Iwb-LN-kcg" id="JEe-tA-SXH"/>
@@ -467,6 +477,7 @@
                         <outlet property="btnSpeedOneEight" destination="y3K-OG-SYf" id="sIX-I7-dUg"/>
                         <outlet property="btnSpeedOneFourth" destination="0tr-00-oad" id="VAV-Zf-ppQ"/>
                         <outlet property="btnSwingTweak" destination="CTB-En-V3C" id="uuu-FJ-rle"/>
+                        <outlet property="btnUndo" destination="QLZ-s3-nqI" id="jCc-gi-rod"/>
                         <outlet property="lblVideoStartTime" destination="cmN-HT-iw8" id="iN4-Zv-lxZ"/>
                         <outlet property="playBackSlider" destination="YjR-wc-btI" id="d07-p0-YiH"/>
                         <outlet property="playBottomView" destination="VhT-xu-8QP" id="uAN-F5-Ig9"/>
@@ -601,6 +612,7 @@
     </scenes>
     <resources>
         <image name="Back" width="26" height="24"/>
+        <image name="ST_Undo" width="50" height="50"/>
         <image name="arrowshape.turn.up.backward.fill" catalog="system" width="128" height="106"/>
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
