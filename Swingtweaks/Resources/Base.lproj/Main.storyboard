@@ -17,16 +17,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iam-2D-d3y">
-                                <rect key="frame" x="143" y="432" width="128" height="42"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="25"/>
-                                <state key="normal" title="Play Video">
-                                    <color key="titleColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="PlayVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="M4K-1h-3R4"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2U-wx-aqA">
                                 <rect key="frame" x="132" y="362" width="150" height="40"/>
                                 <color key="backgroundColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -45,6 +35,16 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="btnCameraRoll:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xCt-bc-YEk"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iam-2D-d3y">
+                                <rect key="frame" x="143" y="432" width="128" height="42"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="25"/>
+                                <state key="normal" title="Play Video">
+                                    <color key="titleColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="PlayVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="M4K-1h-3R4"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -254,22 +254,27 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VhT-xu-8QP">
                                                 <rect key="frame" x="138" y="0.0" width="138" height="100"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ktr-4Q-6rz">
-                                                        <rect key="frame" x="34" y="15.5" width="70" height="69"/>
-                                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IK1-2N-mXZ">
+                                                        <rect key="frame" x="39" y="20.5" width="60" height="59"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="70" id="GAt-MG-pql"/>
-                                                            <constraint firstAttribute="width" constant="70" id="rRk-MG-VzS"/>
+                                                            <constraint firstAttribute="width" constant="60" id="a6b-1w-cE5"/>
+                                                            <constraint firstAttribute="height" constant="60" id="t8s-Er-IOj"/>
                                                         </constraints>
+                                                        <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="25"/>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" backgroundImage="play.circle.fill" catalog="system"/>
-                                                        <state key="selected" backgroundImage="pause"/>
+                                                        <state key="normal" backgroundImage="play.circle.fill" catalog="system">
+                                                            <color key="titleColor" red="0.0" green="0.38923918060000001" blue="0.60295376710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </state>
+                                                        <state key="selected" backgroundImage="pause.circle.fill" catalog="system"/>
+                                                        <connections>
+                                                            <action selector="PlayVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DNR-JP-TNd"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="ktr-4Q-6rz" firstAttribute="centerX" secondItem="VhT-xu-8QP" secondAttribute="centerX" id="6Wb-VM-dSQ"/>
-                                                    <constraint firstItem="ktr-4Q-6rz" firstAttribute="centerY" secondItem="VhT-xu-8QP" secondAttribute="centerY" id="IkW-eQ-NlB"/>
+                                                    <constraint firstItem="IK1-2N-mXZ" firstAttribute="centerX" secondItem="VhT-xu-8QP" secondAttribute="centerX" id="b8e-X8-w3Q"/>
+                                                    <constraint firstItem="IK1-2N-mXZ" firstAttribute="centerY" secondItem="VhT-xu-8QP" secondAttribute="centerY" id="tGA-9S-ukf"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cB4-fs-yl0">
@@ -465,9 +470,9 @@
                         <outlet property="SwingTweakBottomView" destination="cB4-fs-yl0" id="pHm-iT-Hqn"/>
                         <outlet property="ViewSpeed" destination="dSD-hn-mC7" id="kB8-R3-0LC"/>
                         <outlet property="btnBack" destination="uWt-Jl-6Rj" id="bTf-Yj-1n2"/>
-                        <outlet property="btnBackword" destination="czS-yk-ETW" id="XBX-oc-pW0"/>
-                        <outlet property="btnForword" destination="Lgs-Ny-ua1" id="ljy-bn-KVH"/>
-                        <outlet property="btnPlay" destination="ktr-4Q-6rz" id="pjw-da-eax"/>
+                        <outlet property="btnBackward" destination="czS-yk-ETW" id="XBX-oc-pW0"/>
+                        <outlet property="btnForward" destination="Lgs-Ny-ua1" id="ljy-bn-KVH"/>
+                        <outlet property="btnPlay" destination="IK1-2N-mXZ" id="Qab-VI-5Qm"/>
                         <outlet property="btnRecord" destination="aql-sK-C9y" id="wYN-cf-dk1"/>
                         <outlet property="btnSave" destination="5vl-et-pTY" id="4lR-Xa-XbW"/>
                         <outlet property="btnSeekPlay" destination="Iwb-LN-kcg" id="JEe-tA-SXH"/>
@@ -476,7 +481,7 @@
                         <outlet property="btnSpeedNormal" destination="I6r-OM-VSS" id="JLk-qU-dXl"/>
                         <outlet property="btnSpeedOneEight" destination="y3K-OG-SYf" id="sIX-I7-dUg"/>
                         <outlet property="btnSpeedOneFourth" destination="0tr-00-oad" id="VAV-Zf-ppQ"/>
-                        <outlet property="btnSwingTweak" destination="CTB-En-V3C" id="uuu-FJ-rle"/>
+                        <outlet property="btnTweak" destination="CTB-En-V3C" id="uuu-FJ-rle"/>
                         <outlet property="btnUndo" destination="QLZ-s3-nqI" id="jCc-gi-rod"/>
                         <outlet property="lblVideoStartTime" destination="cmN-HT-iw8" id="iN4-Zv-lxZ"/>
                         <outlet property="playBackSlider" destination="YjR-wc-btI" id="d07-p0-YiH"/>
@@ -617,7 +622,7 @@
         <image name="microphonedisable" width="64" height="64"/>
         <image name="microphoneenabele" width="64" height="64"/>
         <image name="next" width="16" height="16"/>
-        <image name="pause" width="30" height="30"/>
+        <image name="pause.circle.fill" catalog="system" width="128" height="121"/>
         <image name="play.circle.fill" catalog="system" width="128" height="121"/>
         <image name="playerpause" width="16" height="16"/>
         <image name="playerplay" width="16" height="16"/>

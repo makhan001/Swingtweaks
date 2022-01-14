@@ -22,28 +22,28 @@ class CreateTweakViewController: UIViewController {
     @IBOutlet weak var ViewSpeed:UIView!
     @IBOutlet weak var btnSave:UIButton!
     @IBOutlet weak var btnSpeed:UIButton!
+    @IBOutlet weak var btnTweak:UIButton!
     @IBOutlet weak var btnRecord:UIButton!
     @IBOutlet weak var btnSpeedHalf:UIButton!
     @IBOutlet weak var btnSpeedNormal:UIButton!
     @IBOutlet weak var btnSpeedOneEight:UIButton!
     @IBOutlet weak var btnSpeedOneFourth:UIButton!
-    @IBOutlet weak var btnSwingTweak:UIButton!
     //Hide UI
-    @IBOutlet weak var recordingBottomView:UIView!
     @IBOutlet weak var playBottomView:UIView!
+    @IBOutlet weak var recordingBottomView:UIView!
     @IBOutlet weak var saveDeleteBottomView:UIView!
     @IBOutlet weak var SwingTweakBottomView:UIView!
     @IBOutlet weak var CollectionView:ToolItemCollectionView!
     //Play Seek UI
+    @IBOutlet weak var btnUndo:UIButton!
+    @IBOutlet weak var btnForward:UIButton!
+    @IBOutlet weak var viewSeekBar: UIView!
+    @IBOutlet weak var btnSeekPlay:UIButton!
+    @IBOutlet weak var btnBackward:UIButton!
     @IBOutlet weak var playBackSlider: UISlider!
     @IBOutlet weak var lblVideoStartTime: UILabel!
-    @IBOutlet weak var btnBackword:UIButton!
-    @IBOutlet weak var btnForword:UIButton!
-    @IBOutlet weak var btnSeekPlay:UIButton!
-    @IBOutlet weak var viewSeekBar: UIView!
-    @IBOutlet weak var btnUndo:UIButton!
+   
     var lastValue:Float = 0.0
-    var lasttime:Double = 0.0
     var currentTime:Double = 0.0
     var videoUrl: URL?
     var videoOutputURL: URL?
@@ -58,9 +58,7 @@ class CreateTweakViewController: UIViewController {
         return player?.rate != 0 && player?.error == nil
     }
     var timer = Timer()
-    //  Tools Editors
     var assetsGenerator:AVAssetImageGenerator!
-    //Tools Setup
     lazy var drawingView: DrawsanaView = {
         let drawingView = DrawsanaView()
         drawingView.operationStack.delegate = self
@@ -80,11 +78,11 @@ class CreateTweakViewController: UIViewController {
     private let addOverlayEditor = addOverlayImageLibrary()
     var isToolAdded:Bool = false
     var value:Float64 = 0.0
-    
     private var isSeekInProgress = false
     private var chaseTime = CMTime.zero
     private var preferredFrameRate: Float = 0.0
-    
+    private var totalFrames : Float = 0.0
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,14 +90,12 @@ class CreateTweakViewController: UIViewController {
         playBackSlider.maximumValue = 1.0
         playBackSlider.isContinuous = true
         self.lastValue = playBackSlider.value
-        getTotalFramesCount(videoUrl: videoUrl!)
+        
         setUp()
         btnSave.isUserInteractionEnabled = false
         self.showHideBottomTopView(isHidden: true)
+      
     }
-    
-    
-    
     func showHideBottomTopView(isHidden: Bool) {
         CollectionView.isHidden = isHidden
         self.recordingBottomView.isHidden = !isHidden
@@ -107,11 +103,12 @@ class CreateTweakViewController: UIViewController {
         self.SwingTweakBottomView.isHidden = !isHidden
         self.btnRecord.isHidden = true
     }
+                                   
 }
 
 extension CreateTweakViewController{
     private func setUp() {
-        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnSwingTweak, btnSeekPlay, btnForword, btnBackword].forEach {
+        [btnBack, btnPlay, btnSpeed, btnRecord, btnSpeedHalf, btnSpeedNormal, btnSpeedOneFourth, btnSpeedOneEight, btnSave, btnTweak, btnSeekPlay, btnForward, btnBackward].forEach {
             $0?.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         }
         player?.addObserver(self, forKeyPath: "rate", options: [], context: nil)
@@ -135,12 +132,13 @@ extension CreateTweakViewController{
         playBackSlider.addTarget(self, action: #selector(onSliderValChanged(slider:event:)), for: .valueChanged)
         let forwordlongPress = UILongPressGestureRecognizer(target: self, action: #selector(forwordLongPress(gesture:)))
         forwordlongPress.minimumPressDuration = 0.5
-        self.btnForword.addGestureRecognizer(forwordlongPress)
+        self.btnForward.addGestureRecognizer(forwordlongPress)
         
         let backwordlongPress = UILongPressGestureRecognizer(target: self, action: #selector(backwordLongPress(gesture:)))
         backwordlongPress.minimumPressDuration = 0.5
-        self.btnBackword.addGestureRecognizer(backwordlongPress)
+        self.btnBackward.addGestureRecognizer(backwordlongPress)
         btnUndo.addTarget(drawingView.operationStack, action: #selector(DrawingOperationStack.undo), for: .touchUpInside)
+        getTotalFramesCount(videoUrl: videoUrl!)
     }
     func getTotalFramesCount(videoUrl: URL) {
         let asset = AVURLAsset(url: videoUrl, options: nil)
@@ -150,11 +148,8 @@ extension CreateTweakViewController{
             self.preferredFrameRate = framePerSeconds
             if let duration = self.player?.currentItem?.asset.duration {
                 let totalSeconds = CMTimeGetSeconds(duration)
-               // self.totalVideoDuration = Float(totalSeconds)
-                print("TotalDurationSeconds :: \(totalSeconds)")
-               // self.totalFramesPerSeconds = Float(totalSeconds) * framePerSeconds
-                let totalFrames = Float(totalSeconds) * framePerSeconds
-                print("Total frames", totalFrames)
+                let totalFrame = Float(totalSeconds) * framePerSeconds
+                totalFrames = totalFrame
             }
         }
     }
@@ -245,7 +240,7 @@ extension CreateTweakViewController{
                 print("")
                 print("begin with value \(slider.value)")
             case .moved:
-                print("moved with value \(slider.value)")
+                //print("moved with value \(slider.value)")
                 DispatchQueue.main.async {
                     self.dragSlider(seekSlider: slider)
                 }
@@ -284,16 +279,16 @@ extension CreateTweakViewController {
         case btnSave:
             print("btnSave")
             // stopRecording()
-        case btnSwingTweak:
+        case btnTweak:
             print("SwingTK")
             self.swingTweakButtonAction()
         case btnSeekPlay:
             seekPlayAction()
-        case btnForword:
+        case btnForward:
             DispatchQueue.main.async {
                 self.seekForword()
             }
-        case btnBackword:
+        case btnBackward:
             DispatchQueue.main.async {
                 self.seekbackWord()
             }
@@ -320,9 +315,11 @@ extension CreateTweakViewController {
         if tweakMode == true{
             if btnPlay.isSelected == false{
                 btnPlay.setBackgroundImage(UIImage(named: "recording_on"), for: .normal)
+                btnPlay.tintColor = .white
             }
             else {
                 btnPlay.setBackgroundImage(UIImage(named: "recording_off"), for: .selected)
+                btnPlay.tintColor = .black
             }
         }
     }
@@ -474,17 +471,12 @@ extension CreateTweakViewController {
     func dragSlider(seekSlider: UISlider) {
         self.player?.pause()
         if seekSlider.value > lastValue { // forward
-            self.stepByFrame(in: .forward)
-//            self.player?.currentItem?.step(byCount: 1)
+            self.stepByFrame(in: .forward, slider: seekSlider)
         } else { // backward
-            self.stepByFrame(in: .backward)
-//            self.player?.currentItem?.step(byCount: -1)
+            self.stepByFrame(in: .backward, slider: seekSlider)
         }
-//        seekSlider.setValue(seekSlider.value, animated: false)
         self.lastValue = seekSlider.value
-        print("lastValue ---> \(lastValue)")
-        
-        
+        //print("lastValue ---> \(lastValue)")
 //        DispatchQueue.main.async {
 //            //            if self.currentTime >= self.lasttime {
 //            //                self.player?.currentItem?.step(byCount: 1)
@@ -543,35 +535,34 @@ extension CreateTweakViewController {
     public func seekWithFrame(to time: CMTime) {
         seekSmoothlyToTime(newChaseTime: time)
     }
-    func stepByFrame(in direction: Direction) {
+    func stepByFrame(in direction: Direction, slider:UISlider) {
         let frameRate = preferredFrameRate //preferredFrameRate
             ?? player?.currentItem?.tracks
             .first(where: { $0.assetTrack?.mediaType == .video })?
-                .currentVideoFrameRate
-            ?? -1
-
+                .currentVideoFrameRate ?? -1
         let time = player?.currentItem?.currentTime() ?? CMTime.zero
         let seconds = Double(1) / Double(frameRate)
         let timescale = Double(seconds) / Double(time.timescale) < 1 ? 600 : time.timescale
-        let oneFrame = CMTime(seconds: seconds, preferredTimescale: timescale)
+        print("slider.value\(slider.value)")
+        print("totalfrmesCount\(totalFrames)")
+        print("seconds\(seconds)")
+        print("preferredFrameRate\(preferredFrameRate)")
+        let oneFrame = CMTime(seconds:seconds, preferredTimescale: timescale)
         let next = direction == .forward
             ? CMTimeAdd(time, oneFrame)
             : CMTimeSubtract(time, oneFrame)
-
         seekSmoothlyToTime(newChaseTime: next)
     }
     func actuallySeekToTime() {
         isSeekInProgress = true
         let seekTimeInProgress = chaseTime
-
         player?.seek(to: seekTimeInProgress, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { [weak self] _ in
             guard let self = self else { return }
             let value = Double(seekTimeInProgress.value)
-            print("value ---> \(value.roundToDecimal(3))")
-            
+           // print("value ---> \(value.roundToDecimal(3))")
             let timescale = Double(seekTimeInProgress.timescale)
-            print("timescale ---> \(timescale.roundToDecimal(3))")
-            print("result ---> \(Float(value / timescale))")
+           // print("timescale ---> \(timescale.roundToDecimal(3))")
+          //  print("result ---> \(Float(value / timescale))")
 //            self.playBackSlider.setValue(Float(value / timescale), animated: false)
             if CMTimeCompare(seekTimeInProgress, self.chaseTime) == 0 {
                 self.isSeekInProgress = false
@@ -587,7 +578,6 @@ extension CreateTweakViewController {
     func seekSmoothlyToTime(newChaseTime: CMTime) {
         if CMTimeCompare(newChaseTime, chaseTime) != 0 {
             chaseTime = newChaseTime
-
             if !isSeekInProgress {
                 trySeekToChaseTime()
             }
@@ -682,7 +672,6 @@ extension CreateTweakViewController: RPPreviewViewControllerDelegate {
 }
 // MARK: Closure Callback
 extension CreateTweakViewController {
-    
     func didSelectToolsAtIndex(_ index: Int) {
         switch index {
         case 0:
