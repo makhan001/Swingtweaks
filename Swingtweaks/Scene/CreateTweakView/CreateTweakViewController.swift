@@ -547,7 +547,7 @@ extension CreateTweakViewController {
         print("totalfrmesCount\(totalFrames)")
         print("seconds\(seconds)")
         print("preferredFrameRate\(preferredFrameRate)")
-        let oneFrame = CMTime(seconds:seconds, preferredTimescale: timescale)
+        let oneFrame = CMTime(seconds:0.03, preferredTimescale: timescale)
         let next = direction == .forward
             ? CMTimeAdd(time, oneFrame)
             : CMTimeSubtract(time, oneFrame)
